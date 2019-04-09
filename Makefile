@@ -1,9 +1,13 @@
 PROJECT_NAME := $(shell basename "$(PWD)")
 SAMPLE_BINARY := $(PROJECT_NAME)_sample
 
-## build-sample: Build the binary for sample
+sample: build-sample run-sample
+
 build-sample:
 	@echo "  >  Building binary..."
 	@go build -o $(SAMPLE_BINARY) ./sample
+	
+run-sample: 
+	@./$(SAMPLE_BINARY)
 
-.PHONY: build-sample
+.PHONY: sample build-sample run-sample
