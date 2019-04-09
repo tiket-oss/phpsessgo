@@ -5,27 +5,38 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-)
 
-const (
-	sessionName = "PHPSESSID" // same with session.name in phpinfo()
+	"github.com/imantung/phpsessgo"
 )
 
 var (
-	name = flag.String("name", "echo-01", "")
 	addr = flag.String("address", ":8181", "echo server address")
 )
 
+var sessionManager phpsessgo.SessionManager
+
 func main() {
 	flag.Parse()
+	fmt.Printf(`Listen and serve at %s`, *addr)
 
-	fmt.Printf(`%s listen and serve at %s`, *name, *addr)
+	var err error
+
+	// initiatte SessionManager
+	sessionConfig := phpsessgo.DefaultSessionConfig()
+	sessionManager, err = phpsessgo.NewSessionManager(sessionConfig)
+	fatalIfError(err)
 
 	// server
 	http.HandleFunc("/", handleFunc)
 
-	err := http.ListenAndServe(*addr, nil)
+	err = http.ListenAndServe(*addr, nil)
 	fatalIfError(err)
+}
+
+func handleFunc(w http.ResponseWriter, r *http.Request) {
+	session := sessionManager.Retrieve(w, r)
+
+	w.Write([]byte(session.SessionID()))
 }
 
 func fatalIfError(err error) {
