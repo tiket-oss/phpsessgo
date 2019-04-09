@@ -4,12 +4,12 @@ import "net/http"
 
 // SessionManager handle session creation/modification
 type SessionManager interface {
-	Retrieve(w http.ResponseWriter, r *http.Request) Session
+	Start(w http.ResponseWriter, r *http.Request) Session
 }
 
 // NewSessionManager create new instance of SessionManager
 func NewSessionManager(config SessionConfig) (SessionManager, error) {
-	sidGenerator := NewSessionIDGenerator()
+	sidGenerator := NewSessionIDCreator()
 	sessionManager := &sessionManager{
 		sessionName:  config.Name,
 		sidGenerator: sidGenerator,
@@ -19,11 +19,11 @@ func NewSessionManager(config SessionConfig) (SessionManager, error) {
 
 type sessionManager struct {
 	sessionName  string
-	sidGenerator SessionIDGenerator
+	sidGenerator SessionIDCreator
 }
 
 // Retrieve
-func (m *sessionManager) Retrieve(w http.ResponseWriter, r *http.Request) Session {
+func (m *sessionManager) Start(w http.ResponseWriter, r *http.Request) Session {
 	sid := m.getSIDFromHTTPCookie(r.Cookies())
 	if sid == "" {
 		sid = m.sidGenerator.CreateSID()
