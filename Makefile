@@ -1,13 +1,23 @@
 PROJECT_NAME := $(shell basename "$(PWD)")
 SAMPLE_BINARY := $(PROJECT_NAME)_sample
+MOCK_TARGET := mock
+
+files = session session_handler session_manager session_id_creator
 
 sample: build-sample run-sample
 
 build-sample:
-	@echo "  >  Building binary..."
+	@echo "  >  Building sample..."
 	@go build -o $(SAMPLE_BINARY) ./sample
 	
 run-sample: 
+	@echo "  >  Run sample..."
 	@./$(SAMPLE_BINARY)
+		
+mock:
+	@echo "  >  Generate mock class..."
+	@go get github.com/golang/mock/gomock
+	@go install github.com/golang/mock/mockgen
+	@$(foreach file,$(files), $(GOPATH)/bin/mockgen -source=$(file).go -destination=$(MOCK_TARGET)/$(file).go -package=$(MOCK_TARGET);)
 
-.PHONY: sample build-sample run-sample
+.PHONY: sample build-sample run-sample  mock
