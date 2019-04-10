@@ -1,25 +1,38 @@
 package phpsessgo
 
-type redisSessionHandler struct {
-	config SessionConfig
+import (
+	"fmt"
+
+	"github.com/go-redis/redis"
+)
+
+const (
+	RedisSessionName = "PHPREDIS_SESSION"
+)
+
+// RedisSessionHandler session management using redis
+type RedisSessionHandler struct {
+	SessionHandler
+	Client      *redis.Client
+	SessionName string
 }
 
-func (h *redisSessionHandler) Open(savePath, sessionName string) bool {
-	return false
+// Close the resource
+func (h *RedisSessionHandler) Close() {
+	if h.Client != nil {
+		h.Client.Close()
+	}
 }
 
-func (h *redisSessionHandler) Close() bool {
-	return false
+func (h *RedisSessionHandler) Read(sessionID string) ([]byte, error) {
+	return h.Client.Get(sessionRedisKey(sessionID)).Bytes()
 }
 
-func (h *redisSessionHandler) Gc(maxLifeTime int) int {
-	return -1
+func (h *RedisSessionHandler) Write(sessionID string, bytes []byte) error {
+	err := h.Client.Set(sessionRedisKey(sessionID), bytes, 0).Err()
+	return err
 }
 
-func (h *redisSessionHandler) Read(sessionID string) string {
-	return ""
-}
-
-func (h *redisSessionHandler) Write(sessionID string, sessionData interface{}) string {
-	return ""
+func sessionRedisKey(sessionID string) string {
+	return fmt.Sprintf("%s:%s", RedisSessionName, sessionID)
 }

@@ -32,26 +32,10 @@ func (m *MockSessionHandler) EXPECT() *MockSessionHandlerMockRecorder {
 	return m.recorder
 }
 
-// Open mocks base method
-func (m *MockSessionHandler) Open(savePath, sessionName string) bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Open", savePath, sessionName)
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// Open indicates an expected call of Open
-func (mr *MockSessionHandlerMockRecorder) Open(savePath, sessionName interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Open", reflect.TypeOf((*MockSessionHandler)(nil).Open), savePath, sessionName)
-}
-
 // Close mocks base method
-func (m *MockSessionHandler) Close() bool {
+func (m *MockSessionHandler) Close() {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Close")
-	ret0, _ := ret[0].(bool)
-	return ret0
+	m.ctrl.Call(m, "Close")
 }
 
 // Close indicates an expected call of Close
@@ -60,26 +44,13 @@ func (mr *MockSessionHandlerMockRecorder) Close() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Close", reflect.TypeOf((*MockSessionHandler)(nil).Close))
 }
 
-// Gc mocks base method
-func (m *MockSessionHandler) Gc(maxLifeTime int) int {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Gc", maxLifeTime)
-	ret0, _ := ret[0].(int)
-	return ret0
-}
-
-// Gc indicates an expected call of Gc
-func (mr *MockSessionHandlerMockRecorder) Gc(maxLifeTime interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Gc", reflect.TypeOf((*MockSessionHandler)(nil).Gc), maxLifeTime)
-}
-
 // Read mocks base method
-func (m *MockSessionHandler) Read(sessionID string) interface{} {
+func (m *MockSessionHandler) Read(sessionID string) ([]byte, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Read", sessionID)
-	ret0, _ := ret[0].(interface{})
-	return ret0
+	ret0, _ := ret[0].([]byte)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Read indicates an expected call of Read
@@ -89,10 +60,10 @@ func (mr *MockSessionHandlerMockRecorder) Read(sessionID interface{}) *gomock.Ca
 }
 
 // Write mocks base method
-func (m *MockSessionHandler) Write(sessionID string, sessionData interface{}) bool {
+func (m *MockSessionHandler) Write(sessionID string, sessionData []byte) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Write", sessionID, sessionData)
-	ret0, _ := ret[0].(bool)
+	ret0, _ := ret[0].(error)
 	return ret0
 }
 

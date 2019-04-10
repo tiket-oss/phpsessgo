@@ -35,7 +35,9 @@ func TestSessionManager_Start(t *testing.T) {
 		req, _ := http.NewRequest(http.MethodGet, "some-url", nil)
 		rr := httptest.NewRecorder()
 
-		manager.Start(rr, req)
+		session, err := manager.Start(rr, req)
+		require.NoError(t, err)
+		require.Equal(t, "random-hash", session.SessionID())
 		require.Equal(t, "some-session-name=random-hash", rr.HeaderMap.Get("Set-Cookie"))
 	})
 
@@ -46,7 +48,8 @@ func TestSessionManager_Start(t *testing.T) {
 			Value: "some-session-id",
 		})
 
-		session := manager.Start(nil, req)
+		session, err := manager.Start(nil, req)
+		require.NoError(t, err)
 		require.Equal(t, "some-session-id", session.SessionID())
 	})
 }

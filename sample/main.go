@@ -13,7 +13,7 @@ var (
 	addr = flag.String("address", ":8181", "echo server address")
 )
 
-var sessionManager phpsessgo.SessionManager
+var sessionManager *phpsessgo.SessionManager
 
 func main() {
 	flag.Parse()
@@ -34,7 +34,10 @@ func main() {
 }
 
 func handleFunc(w http.ResponseWriter, r *http.Request) {
-	session := sessionManager.Retrieve(w, r)
+	session, err := sessionManager.Start(w, r)
+	if err != nil {
+		w.Write([]byte(err.Error()))
+	}
 
 	w.Write([]byte(session.SessionID()))
 }

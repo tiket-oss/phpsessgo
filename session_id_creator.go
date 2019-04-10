@@ -6,12 +6,8 @@ type SessionIDCreator interface {
 	CreateSID() string
 }
 
-// NewSessionIDCreator return instance of SessionIDGenerator
-func NewSessionIDCreator() SessionIDCreator {
-	return &sessionIDCreator{}
-}
-
 type sessionIDCreator struct {
+	SessionIDCreator
 }
 
 func (g *sessionIDCreator) CreateSID() string {

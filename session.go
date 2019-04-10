@@ -1,31 +1,24 @@
 package phpsessgo
 
 // Session handle creation/modification of session parametr
-type Session interface {
-	SessionID() string
-	Get(key string) interface{}
-	Put(key string, val interface{})
+type Session struct {
+	sid   string
+	Value map[string]interface{}
 }
 
 // NewSession create new instance of Session
-func NewSession(sid string) Session {
-	return &session{
+func NewSession(sid string) *Session {
+	return &Session{
 		sid: sid,
 	}
 }
 
-type session struct {
-	sid string
-}
-
-func (s *session) SessionID() string {
+// SessionID return current session ID
+func (s *Session) SessionID() string {
 	return s.sid
 }
 
-func (s *session) Get(key string) interface{} {
+// Save session to session source
+func (s *Session) Save() error {
 	return nil
-}
-
-func (s *session) Put(key string, val interface{}) {
-
 }

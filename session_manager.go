@@ -1,6 +1,11 @@
 package phpsessgo
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+
+	"github.com/go-redis/redis"
+)
 
 // SessionManager handle session creation/modification
 type SessionManager struct {
@@ -11,25 +16,41 @@ type SessionManager struct {
 
 // NewSessionManager create new instance of SessionManager
 func NewSessionManager(config SessionConfig) (*SessionManager, error) {
-	sidCreator := NewSessionIDCreator()
+
 	sessionManager := &SessionManager{
 		SessionName: config.Name,
-		SIDCreator:  sidCreator,
+		SIDCreator:  &sessionIDCreator{},
+		Handler: &RedisSessionHandler{
+			Client: redis.NewClient(&redis.Options{
+				Addr: "localhost:6379",
+			}),
+			SessionName: config.Name,
+		},
 	}
 	return sessionManager, nil
 }
 
 // Start is adoption of PHP start_session() to return current active session
-func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) Session {
-	sid := m.getSIDFromHTTPCookie(r.Cookies())
+func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session *Session, err error) {
+	sid := m.getFromCookies(r.Cookies())
 	if sid == "" {
 		sid = m.SIDCreator.CreateSID()
-		m.setSIDToHTTPCookie(w, sid)
+		m.setToCookies(w, sid)
+
+		session = NewSession(sid)
+		return
 	}
-	return NewSession(sid)
+
+	if m.Handler != nil {
+		b, _ := m.Handler.Read(sid)
+		fmt.Println(string(b))
+	}
+
+	session = NewSession(sid)
+	return
 }
 
-func (m *SessionManager) getSIDFromHTTPCookie(cookies []*http.Cookie) string {
+func (m *SessionManager) getFromCookies(cookies []*http.Cookie) string {
 	for _, cookie := range cookies {
 		if cookie.Name == m.SessionName {
 			return cookie.Value
@@ -38,7 +59,7 @@ func (m *SessionManager) getSIDFromHTTPCookie(cookies []*http.Cookie) string {
 	return ""
 }
 
-func (m *SessionManager) setSIDToHTTPCookie(w http.ResponseWriter, sid string) {
+func (m *SessionManager) setToCookies(w http.ResponseWriter, sid string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:  m.SessionName,
 		Value: sid,
