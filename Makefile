@@ -2,7 +2,7 @@ PROJECT_NAME := $(shell basename "$(PWD)")
 SAMPLE_BINARY := $(PROJECT_NAME)_sample
 MOCK_TARGET := mock
 
-files = session session_handler session_manager session_id_creator
+files = session_handler session_id_creator
 
 sample: build-sample run-sample
 
