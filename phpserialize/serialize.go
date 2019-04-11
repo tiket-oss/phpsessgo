@@ -10,21 +10,21 @@ import (
 
 func Serialize(v phptype.Value) (string, error) {
 	encoder := NewSerializer()
-	encoder.SetSerializedEncodeFunc(SerializedEncodeFunc(Serialize))
+	encoder.SetEncodeFunc(EncodeFunc(Serialize))
 	return encoder.Encode(v)
 }
 
 type Serializer struct {
 	lastErr    error
-	encodeFunc SerializedEncodeFunc
+	EncodeFunc EncodeFunc
 }
 
 func NewSerializer() *Serializer {
 	return &Serializer{}
 }
 
-func (self *Serializer) SetSerializedEncodeFunc(f SerializedEncodeFunc) {
-	self.encodeFunc = f
+func (self *Serializer) SetEncodeFunc(f EncodeFunc) {
+	self.EncodeFunc = f
 }
 
 func (self *Serializer) Encode(v phptype.Value) (string, error) {
@@ -229,11 +229,11 @@ func (self *Serializer) encodeSerialized(v phptype.Value) (buffer bytes.Buffer) 
 	buffer.WriteRune(TOKEN_OBJECT_SERIALIZED)
 	buffer.WriteString(self.prepareClassName(obj.ClassName))
 
-	if self.encodeFunc == nil {
+	if self.EncodeFunc == nil {
 		serialized = obj.Data
 	} else {
 		var err error
-		if serialized, err = self.encodeFunc(obj.Value); err != nil {
+		if serialized, err = self.EncodeFunc(obj.Value); err != nil {
 			self.saveError(err)
 		}
 	}

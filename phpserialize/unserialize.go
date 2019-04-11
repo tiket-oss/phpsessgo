@@ -3,7 +3,6 @@ package phpserialize
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
 
@@ -13,33 +12,33 @@ import (
 const UNSERIALIZABLE_OBJECT_MAX_LEN = 10 * 1024 * 1024 * 1024
 
 func UnSerialize(s string) (phptype.Value, error) {
-	decoder := NewUnSerializer(s)
-	decoder.SetSerializedDecodeFunc(SerializedDecodeFunc(UnSerialize))
+	decoder := NewUnserializer(s)
+	decoder.SetDecodeFunc(DecodeFunc(UnSerialize))
 	return decoder.Decode()
 }
 
-type UnSerializer struct {
+type Unserializer struct {
 	source     string
 	r          *strings.Reader
 	lastErr    error
-	decodeFunc SerializedDecodeFunc
+	DecodeFunc DecodeFunc
 }
 
-func NewUnSerializer(data string) *UnSerializer {
-	return &UnSerializer{
+func NewUnserializer(data string) *Unserializer {
+	return &Unserializer{
 		source: data,
 	}
 }
 
-func (self *UnSerializer) SetReader(r *strings.Reader) {
+func (self *Unserializer) SetReader(r *strings.Reader) {
 	self.r = r
 }
 
-func (self *UnSerializer) SetSerializedDecodeFunc(f SerializedDecodeFunc) {
-	self.decodeFunc = f
+func (self *Unserializer) SetDecodeFunc(f DecodeFunc) {
+	self.DecodeFunc = f
 }
 
-func (self *UnSerializer) Decode() (phptype.Value, error) {
+func (self *Unserializer) Decode() (phptype.Value, error) {
 	if self.r == nil {
 		self.r = strings.NewReader(self.source)
 	}
@@ -77,12 +76,12 @@ func (self *UnSerializer) Decode() (phptype.Value, error) {
 	return value, self.lastErr
 }
 
-func (self *UnSerializer) decodeNull() phptype.Value {
+func (self *Unserializer) decodeNull() phptype.Value {
 	self.expect(SEPARATOR_VALUES)
 	return nil
 }
 
-func (self *UnSerializer) decodeBool() phptype.Value {
+func (self *Unserializer) decodeBool() phptype.Value {
 	var (
 		raw rune
 		err error
@@ -97,7 +96,7 @@ func (self *UnSerializer) decodeBool() phptype.Value {
 	return raw == '1'
 }
 
-func (self *UnSerializer) decodeNumber(isFloat bool) phptype.Value {
+func (self *Unserializer) decodeNumber(isFloat bool) phptype.Value {
 	var (
 		raw string
 		err error
@@ -122,7 +121,7 @@ func (self *UnSerializer) decodeNumber(isFloat bool) phptype.Value {
 	return val
 }
 
-func (self *UnSerializer) decodeString(left, right rune, isFinal bool) phptype.Value {
+func (self *Unserializer) decodeString(left, right rune, isFinal bool) phptype.Value {
 	var (
 		err     error
 		val     phptype.Value
@@ -153,7 +152,7 @@ func (self *UnSerializer) decodeString(left, right rune, isFinal bool) phptype.V
 	return val
 }
 
-func (self *UnSerializer) decodeArray() phptype.Value {
+func (self *Unserializer) decodeArray() phptype.Value {
 	var arrLen int
 	val := make(phptype.Array)
 
@@ -185,7 +184,7 @@ func (self *UnSerializer) decodeArray() phptype.Value {
 	return val
 }
 
-func (self *UnSerializer) decodeObject() phptype.Value {
+func (self *Unserializer) decodeObject() phptype.Value {
 	val := &phptype.Object{
 		ClassName: self.readClassName(),
 	}
@@ -196,7 +195,7 @@ func (self *UnSerializer) decodeObject() phptype.Value {
 	return val
 }
 
-func (self *UnSerializer) decodeSerialized() phptype.Value {
+func (self *Unserializer) decodeSerialized() phptype.Value {
 	val := &phptype.ObjectSerialized{
 		ClassName: self.readClassName(),
 	}
@@ -204,9 +203,9 @@ func (self *UnSerializer) decodeSerialized() phptype.Value {
 	rawData := self.decodeString(DELIMITER_OBJECT_LEFT, DELIMITER_OBJECT_RIGHT, false)
 	val.Data, _ = rawData.(string)
 
-	if self.decodeFunc != nil && val.Data != "" {
+	if self.DecodeFunc != nil && val.Data != "" {
 		var err error
-		if val.Value, err = self.decodeFunc(val.Data); err != nil {
+		if val.Value, err = self.DecodeFunc(val.Data); err != nil {
 			self.saveError(err)
 		}
 	}
@@ -214,7 +213,7 @@ func (self *UnSerializer) decodeSerialized() phptype.Value {
 	return val
 }
 
-func (self *UnSerializer) decodeReference() phptype.Value {
+func (self *Unserializer) decodeReference() phptype.Value {
 	self.expect(SEPARATOR_VALUE_TYPE)
 	if _, err := self.readUntil(SEPARATOR_VALUES); err != nil {
 		self.saveError(fmt.Errorf("phpserialize: Error while reading reference value: %v", err))
@@ -222,19 +221,15 @@ func (self *UnSerializer) decodeReference() phptype.Value {
 	return nil
 }
 
-func (self *UnSerializer) expect(expected rune) {
+func (self *Unserializer) expect(expected rune) {
 	if token, _, err := self.r.ReadRune(); err != nil {
 		self.saveError(fmt.Errorf("phpserialize: Error while reading expected rune %#U: %v", expected, err))
 	} else if token != expected {
-		if debugMode {
-			log.Printf("phpserialize: source\n%s\n", self.source)
-			log.Printf("phpserialize: reader info\n%#v\n", self.r)
-		}
 		self.saveError(fmt.Errorf("phpserialize: Expected %#U but have got %#U", expected, token))
 	}
 }
 
-func (self *UnSerializer) readUntil(stop rune) (string, error) {
+func (self *Unserializer) readUntil(stop rune) (string, error) {
 	var (
 		token rune
 		err   error
@@ -252,7 +247,7 @@ func (self *UnSerializer) readUntil(stop rune) (string, error) {
 	return buf.String(), err
 }
 
-func (self *UnSerializer) readLen() int {
+func (self *Unserializer) readLen() int {
 	var (
 		raw string
 		err error
@@ -273,19 +268,19 @@ func (self *UnSerializer) readLen() int {
 	return val
 }
 
-func (self *UnSerializer) readClassName() (res string) {
+func (self *Unserializer) readClassName() (res string) {
 	rawClass := self.decodeString(DELIMITER_STRING_LEFT, DELIMITER_STRING_RIGHT, false)
 	res, _ = rawClass.(string)
 	return
 }
 
-func (self *UnSerializer) saveError(err error) {
+func (self *Unserializer) saveError(err error) {
 	if self.lastErr == nil {
 		self.lastErr = err
 	}
 }
 
-func (self *UnSerializer) decodeSplArray() phptype.Value {
+func (self *Unserializer) decodeSplArray() phptype.Value {
 	var err error
 	val := &phptype.PhpSplArray{}
 

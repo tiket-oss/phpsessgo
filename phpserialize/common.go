@@ -28,14 +28,6 @@ const (
 	FORMATTER_PRECISION int  = 17
 )
 
-var (
-	debugMode = false
-)
+type DecodeFunc func(string) (phptype.Value, error)
 
-func Debug(value bool) {
-	debugMode = value
-}
-
-type SerializedDecodeFunc func(string) (phptype.Value, error)
-
-type SerializedEncodeFunc func(phptype.Value) (string, error)
+type EncodeFunc func(phptype.Value) (string, error)

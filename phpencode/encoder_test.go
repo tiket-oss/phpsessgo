@@ -140,7 +140,7 @@ func TestEncodeSerializableObjectValue(t *testing.T) {
 	}
 
 	encoder := NewPhpEncoder(data)
-	encoder.SetSerializedEncodeFunc(phpserialize.SerializedEncodeFunc(phpserialize.Serialize))
+	encoder.SetEncodeFunc(phpserialize.EncodeFunc(phpserialize.Serialize))
 	if result, err := encoder.Encode(); err != nil {
 		t.Errorf("Can not encode object value %#v \n", err)
 	} else {
@@ -157,7 +157,7 @@ func TestEncodeSerializableObjectValue(t *testing.T) {
 }
 
 func TestEncodeSerializableObjectValueJSON(t *testing.T) {
-	var f phpserialize.SerializedEncodeFunc
+	var f phpserialize.EncodeFunc
 	f = func(v phptype.Value) (string, error) {
 		res, err := json.Marshal(v)
 		return string(res), err
@@ -170,7 +170,7 @@ func TestEncodeSerializableObjectValueJSON(t *testing.T) {
 	}
 
 	encoder := NewPhpEncoder(data)
-	encoder.SetSerializedEncodeFunc(f)
+	encoder.SetEncodeFunc(f)
 	if result, err := encoder.Encode(); err != nil {
 		t.Errorf("Can not encode object value %#v \n", err)
 	} else {

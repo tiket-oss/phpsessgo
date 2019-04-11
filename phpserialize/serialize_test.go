@@ -364,7 +364,7 @@ func TestEncodeObjectSerializableArray(t *testing.T) {
 
 	source = obj
 	encoder := NewSerializer()
-	encoder.SetSerializedEncodeFunc(SerializedEncodeFunc(Serialize))
+	encoder.SetEncodeFunc(EncodeFunc(Serialize))
 	if val, err = encoder.Encode(source); err != nil {
 		t.Errorf("Error while encoding array value: %v\n", err)
 	} else {
@@ -383,7 +383,7 @@ func TestEncodeObjectSerializableJSON(t *testing.T) {
 		source phptype.Value
 		val    string
 		err    error
-		f      SerializedEncodeFunc
+		f      EncodeFunc
 	)
 
 	f = func(v phptype.Value) (string, error) {
@@ -403,7 +403,7 @@ func TestEncodeObjectSerializableJSON(t *testing.T) {
 
 	source = obj
 	encoder := NewSerializer()
-	encoder.SetSerializedEncodeFunc(f)
+	encoder.SetEncodeFunc(f)
 	if val, err = encoder.Encode(source); err != nil {
 		t.Errorf("Error while encoding array value: %v\n", err)
 	} else {

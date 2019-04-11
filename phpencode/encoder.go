@@ -19,8 +19,8 @@ func NewPhpEncoder(data PhpSession) *PhpEncoder {
 	}
 }
 
-func (self *PhpEncoder) SetSerializedEncodeFunc(f phpserialize.SerializedEncodeFunc) {
-	self.encoder.SetSerializedEncodeFunc(f)
+func (self *PhpEncoder) SetEncodeFunc(f phpserialize.EncodeFunc) {
+	self.encoder.SetEncodeFunc(f)
 }
 
 func (self *PhpEncoder) Encode() (string, error) {

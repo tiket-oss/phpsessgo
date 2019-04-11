@@ -206,7 +206,7 @@ func TestDecodeSerializableObjectValueNoFunc(t *testing.T) {
 
 func TestDecodeSerializableObjectValue(t *testing.T) {
 	decoder := NewPhpDecoder("object|C:10:\"TestObject\":96:{a:1:{s:4:\"item\";O:8:\"AbcClass\":3:{s:1:\"a\";i:5;s:11:\"\x00AbcClass\x00b\";s:7:\"private\";s:4:\"\x00*\x00c\";i:8;}}}")
-	decoder.SetSerializedDecodeFunc(phpserialize.SerializedDecodeFunc(phpserialize.UnSerialize))
+	decoder.SetDecodeFunc(phpserialize.DecodeFunc(phpserialize.UnSerialize))
 	if result, err := decoder.Decode(); err != nil {
 		t.Errorf("Can not decode object value %#v \n", err)
 	} else {
@@ -256,7 +256,7 @@ func TestDecodeSerializableObjectFoo(t *testing.T) {
 }
 
 func TestDecodeSerializableObjectBar(t *testing.T) {
-	var f phpserialize.SerializedDecodeFunc
+	var f phpserialize.DecodeFunc
 	f = func(s string) (phptype.Value, error) {
 		var (
 			val map[string]string
@@ -267,7 +267,7 @@ func TestDecodeSerializableObjectBar(t *testing.T) {
 	}
 
 	decoder := NewPhpDecoder("bar|C:3:\"Bar\":19:{{\"public\":\"public\"}}")
-	decoder.SetSerializedDecodeFunc(f)
+	decoder.SetDecodeFunc(f)
 	if result, err := decoder.Decode(); err != nil {
 		t.Errorf("Can not decode object value %#v \n", err)
 	} else {

@@ -11,20 +11,20 @@ import (
 
 type PhpDecoder struct {
 	source  *strings.Reader
-	decoder *phpserialize.UnSerializer
+	decoder *phpserialize.Unserializer
 }
 
 func NewPhpDecoder(phpSession string) *PhpDecoder {
 	decoder := &PhpDecoder{
 		source:  strings.NewReader(phpSession),
-		decoder: phpserialize.NewUnSerializer(""),
+		decoder: phpserialize.NewUnserializer(""),
 	}
 	decoder.decoder.SetReader(decoder.source)
 	return decoder
 }
 
-func (self *PhpDecoder) SetSerializedDecodeFunc(f phpserialize.SerializedDecodeFunc) {
-	self.decoder.SetSerializedDecodeFunc(f)
+func (self *PhpDecoder) SetDecodeFunc(f phpserialize.DecodeFunc) {
+	self.decoder.SetDecodeFunc(f)
 }
 
 func (self *PhpDecoder) Decode() (PhpSession, error) {
