@@ -12,25 +12,6 @@ func NewObject(className string) *Object {
 	}
 }
 
-//
-// func (self *Object) GetClassName() string {
-// 	return self.ClassName
-// }
-//
-// func (self *Object) SetClassName(name string) *Object {
-// 	self.ClassName = name
-// 	return self
-// }
-//
-// func (self *Object) GetMembers() Array {
-// 	return self.Members
-// }
-//
-// func (self *Object) SetMembers(members Array) *Object {
-// 	self.Members = members
-// 	return self
-// }
-
 func (self *Object) GetPrivate(name string) (v Value, ok bool) {
 	v, ok = self.Members["\x00"+self.ClassName+"\x00"+name]
 	return
