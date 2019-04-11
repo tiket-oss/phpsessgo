@@ -1,11 +1,11 @@
 package phpsessgo
 
-import "github.com/yvasiyarov/php_session_decoder"
+import "github.com/imantung/phpsessgo/phpencode"
 
 // Session handle creation/modification of session parametr
 type Session struct {
 	sid   string
-	Value php_session_decoder.PhpSession
+	Value phpencode.PhpSession
 }
 
 // NewSession create new instance of Session
