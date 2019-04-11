@@ -6,11 +6,13 @@ import (
 	"log"
 	"strconv"
 	"strings"
+
+	"github.com/imantung/phpsessgo/phptype"
 )
 
 const UNSERIALIZABLE_OBJECT_MAX_LEN = 10 * 1024 * 1024 * 1024
 
-func UnSerialize(s string) (PhpValue, error) {
+func UnSerialize(s string) (phptype.PhpValue, error) {
 	decoder := NewUnSerializer(s)
 	decoder.SetSerializedDecodeFunc(SerializedDecodeFunc(UnSerialize))
 	return decoder.Decode()
@@ -37,12 +39,12 @@ func (self *UnSerializer) SetSerializedDecodeFunc(f SerializedDecodeFunc) {
 	self.decodeFunc = f
 }
 
-func (self *UnSerializer) Decode() (PhpValue, error) {
+func (self *UnSerializer) Decode() (phptype.PhpValue, error) {
 	if self.r == nil {
 		self.r = strings.NewReader(self.source)
 	}
 
-	var value PhpValue
+	var value phptype.PhpValue
 
 	if token, _, err := self.r.ReadRune(); err == nil {
 		switch token {
@@ -75,12 +77,12 @@ func (self *UnSerializer) Decode() (PhpValue, error) {
 	return value, self.lastErr
 }
 
-func (self *UnSerializer) decodeNull() PhpValue {
+func (self *UnSerializer) decodeNull() phptype.PhpValue {
 	self.expect(SEPARATOR_VALUES)
 	return nil
 }
 
-func (self *UnSerializer) decodeBool() PhpValue {
+func (self *UnSerializer) decodeBool() phptype.PhpValue {
 	var (
 		raw rune
 		err error
@@ -95,11 +97,11 @@ func (self *UnSerializer) decodeBool() PhpValue {
 	return raw == '1'
 }
 
-func (self *UnSerializer) decodeNumber(isFloat bool) PhpValue {
+func (self *UnSerializer) decodeNumber(isFloat bool) phptype.PhpValue {
 	var (
 		raw string
 		err error
-		val PhpValue
+		val phptype.PhpValue
 	)
 	self.expect(SEPARATOR_VALUE_TYPE)
 
@@ -120,10 +122,10 @@ func (self *UnSerializer) decodeNumber(isFloat bool) PhpValue {
 	return val
 }
 
-func (self *UnSerializer) decodeString(left, right rune, isFinal bool) PhpValue {
+func (self *UnSerializer) decodeString(left, right rune, isFinal bool) phptype.PhpValue {
 	var (
 		err     error
-		val     PhpValue
+		val     phptype.PhpValue
 		strLen  int
 		readLen int
 	)
@@ -151,9 +153,9 @@ func (self *UnSerializer) decodeString(left, right rune, isFinal bool) PhpValue 
 	return val
 }
 
-func (self *UnSerializer) decodeArray() PhpValue {
+func (self *UnSerializer) decodeArray() phptype.PhpValue {
 	var arrLen int
-	val := make(PhpArray)
+	val := make(phptype.PhpArray)
 
 	arrLen = self.readLen()
 	self.expect(DELIMITER_OBJECT_LEFT)
@@ -183,28 +185,28 @@ func (self *UnSerializer) decodeArray() PhpValue {
 	return val
 }
 
-func (self *UnSerializer) decodeObject() PhpValue {
-	val := &PhpObject{
-		className: self.readClassName(),
+func (self *UnSerializer) decodeObject() phptype.PhpValue {
+	val := &phptype.PhpObject{
+		ClassName: self.readClassName(),
 	}
 
 	rawMembers := self.decodeArray()
-	val.members, _ = rawMembers.(PhpArray)
+	val.Members, _ = rawMembers.(phptype.PhpArray)
 
 	return val
 }
 
-func (self *UnSerializer) decodeSerialized() PhpValue {
-	val := &PhpObjectSerialized{
-		className: self.readClassName(),
+func (self *UnSerializer) decodeSerialized() phptype.PhpValue {
+	val := &phptype.PhpObjectSerialized{
+		ClassName: self.readClassName(),
 	}
 
 	rawData := self.decodeString(DELIMITER_OBJECT_LEFT, DELIMITER_OBJECT_RIGHT, false)
-	val.data, _ = rawData.(string)
+	val.Data, _ = rawData.(string)
 
-	if self.decodeFunc != nil && val.data != "" {
+	if self.decodeFunc != nil && val.Data != "" {
 		var err error
-		if val.value, err = self.decodeFunc(val.data); err != nil {
+		if val.Value, err = self.decodeFunc(val.Data); err != nil {
 			self.saveError(err)
 		}
 	}
@@ -212,7 +214,7 @@ func (self *UnSerializer) decodeSerialized() PhpValue {
 	return val
 }
 
-func (self *UnSerializer) decodeReference() PhpValue {
+func (self *UnSerializer) decodeReference() phptype.PhpValue {
 	self.expect(SEPARATOR_VALUE_TYPE)
 	if _, err := self.readUntil(SEPARATOR_VALUES); err != nil {
 		self.saveError(fmt.Errorf("phpserialize: Error while reading reference value: %v", err))
@@ -283,9 +285,9 @@ func (self *UnSerializer) saveError(err error) {
 	}
 }
 
-func (self *UnSerializer) decodeSplArray() PhpValue {
+func (self *UnSerializer) decodeSplArray() phptype.PhpValue {
 	var err error
-	val := &PhpSplArray{}
+	val := &phptype.PhpSplArray{}
 
 	self.expect(SEPARATOR_VALUE_TYPE)
 	self.expect(TOKEN_INT)
@@ -295,9 +297,9 @@ func (self *UnSerializer) decodeSplArray() PhpValue {
 		self.saveError(fmt.Errorf("phpserialize: Unable to read flags of SplArray"))
 		return nil
 	}
-	val.flags = PhpValueInt(flags)
+	val.Flags = phptype.PhpValueInt(flags)
 
-	if val.array, err = self.Decode(); err != nil {
+	if val.Array, err = self.Decode(); err != nil {
 		self.saveError(fmt.Errorf("phpserialize: Can't parse SplArray: %v", err))
 		return nil
 	}
@@ -306,7 +308,7 @@ func (self *UnSerializer) decodeSplArray() PhpValue {
 	self.expect(TOKEN_SPL_ARRAY_MEMBERS)
 	self.expect(SEPARATOR_VALUE_TYPE)
 
-	if val.properties, err = self.Decode(); err != nil {
+	if val.Properties, err = self.Decode(); err != nil {
 		self.saveError(fmt.Errorf("phpserialize: Can't parse properties of SplArray: %v", err))
 		return nil
 	}

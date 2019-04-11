@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/imantung/phpsessgo/phpserialize"
+	"github.com/imantung/phpsessgo/phptype"
 )
 
 type PhpDecoder struct {
@@ -30,7 +31,7 @@ func (self *PhpDecoder) Decode() (PhpSession, error) {
 	var (
 		name  string
 		err   error
-		value phpserialize.PhpValue
+		value phptype.PhpValue
 	)
 	res := make(PhpSession)
 

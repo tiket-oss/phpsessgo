@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/imantung/phpsessgo/phpserialize"
+	"github.com/imantung/phpsessgo/phptype"
 )
 
 func TestEncodeBooleanValue(t *testing.T) {
@@ -71,9 +72,9 @@ func TestEncodeStringValue(t *testing.T) {
 
 func TestEncodeArrayValue(t *testing.T) {
 	data := PhpSession{
-		"arr": phpserialize.PhpArray{
+		"arr": phptype.PhpArray{
 			// Zero element
-			//phpserialize.PhpValue(0): 5,
+			//phptype.PhpValue(0): 5,
 			0:       5,
 			"test":  true,
 			"test2": nil,
@@ -91,7 +92,7 @@ func TestEncodeArrayValue(t *testing.T) {
 }
 
 func TestEncodeObjectValue(t *testing.T) {
-	obj := phpserialize.NewPhpObject("TestObject")
+	obj := phptype.NewPhpObject("TestObject")
 	obj.SetPublic("a", 5)
 	obj.SetProtected("c", 8)
 	obj.SetPrivate("b", "priv")
@@ -110,8 +111,8 @@ func TestEncodeObjectValue(t *testing.T) {
 }
 
 func TestEncodeSerializableObjectValueNoFunc(t *testing.T) {
-	obj := phpserialize.NewPhpObjectSerialized("TestObject")
-	obj.SetData("a:3:{s:1:\"a\";i:5;s:1:\"b\";s:4:\"priv\";s:1:\"c\";i:8;}")
+	obj := phptype.NewPhpObjectSerialized("TestObject")
+	obj.Data = "a:3:{s:1:\"a\";i:5;s:1:\"b\";s:4:\"priv\";s:1:\"c\";i:8;}"
 	data := PhpSession{
 		"obj": obj,
 	}
@@ -127,13 +128,13 @@ func TestEncodeSerializableObjectValueNoFunc(t *testing.T) {
 }
 
 func TestEncodeSerializableObjectValue(t *testing.T) {
-	arr := phpserialize.PhpArray{
+	arr := phptype.PhpArray{
 		"a": 5,
 		"b": "priv",
 		"c": 8,
 	}
-	obj := phpserialize.NewPhpObjectSerialized("TestObject")
-	obj.SetValue(phpserialize.PhpValue(arr))
+	obj := phptype.NewPhpObjectSerialized("TestObject")
+	obj.Value = phptype.PhpValue(arr)
 	data := PhpSession{
 		"obj": obj,
 	}
@@ -157,13 +158,13 @@ func TestEncodeSerializableObjectValue(t *testing.T) {
 
 func TestEncodeSerializableObjectValueJSON(t *testing.T) {
 	var f phpserialize.SerializedEncodeFunc
-	f = func(v phpserialize.PhpValue) (string, error) {
+	f = func(v phptype.PhpValue) (string, error) {
 		res, err := json.Marshal(v)
 		return string(res), err
 	}
 
-	obj := phpserialize.NewPhpObjectSerialized("Bar")
-	obj.SetValue(map[string]string{"public": "public"})
+	obj := phptype.NewPhpObjectSerialized("Bar")
+	obj.Value = map[string]string{"public": "public"}
 	data := PhpSession{
 		"bar": obj,
 	}

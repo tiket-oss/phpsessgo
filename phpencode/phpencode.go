@@ -1,10 +1,10 @@
 package phpencode
 
-import "github.com/imantung/phpsessgo/phpserialize"
+import "github.com/imantung/phpsessgo/phptype"
 
 const SEPARATOR_VALUE_NAME rune = '|'
 
-type PhpSession map[string]phpserialize.PhpValue
+type PhpSession map[string]phptype.PhpValue
 
 // Decode decode string to PHP Session
 func Decode(raw string) (PhpSession, error) {

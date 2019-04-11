@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"strconv"
+
+	"github.com/imantung/phpsessgo/phptype"
 )
 
-func Serialize(v PhpValue) (string, error) {
+func Serialize(v phptype.PhpValue) (string, error) {
 	encoder := NewSerializer()
 	encoder.SetSerializedEncodeFunc(SerializedEncodeFunc(Serialize))
 	return encoder.Encode(v)
@@ -25,7 +27,7 @@ func (self *Serializer) SetSerializedEncodeFunc(f SerializedEncodeFunc) {
 	self.encodeFunc = f
 }
 
-func (self *Serializer) Encode(v PhpValue) (string, error) {
+func (self *Serializer) Encode(v phptype.PhpValue) (string, error) {
 	var value bytes.Buffer
 
 	switch t := v.(type) {
@@ -39,13 +41,13 @@ func (self *Serializer) Encode(v PhpValue) (string, error) {
 		value = self.encodeNumber(v)
 	case string:
 		value = self.encodeString(v, DELIMITER_STRING_LEFT, DELIMITER_STRING_RIGHT, true)
-	case PhpArray, map[PhpValue]PhpValue, PhpSlice:
+	case phptype.PhpArray, map[phptype.PhpValue]phptype.PhpValue, phptype.PhpSlice:
 		value = self.encodeArray(v, true)
-	case *PhpObject:
+	case *phptype.PhpObject:
 		value = self.encodeObject(v)
-	case *PhpObjectSerialized:
+	case *phptype.PhpObjectSerialized:
 		value = self.encodeSerialized(v)
-	case *PhpSplArray:
+	case *phptype.PhpSplArray:
 		value = self.encodeSplArray(v)
 	}
 
@@ -58,7 +60,7 @@ func (self *Serializer) encodeNull() (buffer bytes.Buffer) {
 	return
 }
 
-func (self *Serializer) encodeBool(v PhpValue) (buffer bytes.Buffer) {
+func (self *Serializer) encodeBool(v phptype.PhpValue) (buffer bytes.Buffer) {
 	buffer.WriteRune(TOKEN_BOOL)
 	buffer.WriteRune(SEPARATOR_VALUE_TYPE)
 
@@ -72,7 +74,7 @@ func (self *Serializer) encodeBool(v PhpValue) (buffer bytes.Buffer) {
 	return
 }
 
-func (self *Serializer) encodeNumber(v PhpValue) (buffer bytes.Buffer) {
+func (self *Serializer) encodeNumber(v phptype.PhpValue) (buffer bytes.Buffer) {
 	var val string
 
 	isFloat := false
@@ -134,7 +136,7 @@ func (self *Serializer) encodeNumber(v PhpValue) (buffer bytes.Buffer) {
 	return
 }
 
-func (self *Serializer) encodeString(v PhpValue, left, right rune, isFinal bool) (buffer bytes.Buffer) {
+func (self *Serializer) encodeString(v phptype.PhpValue, left, right rune, isFinal bool) (buffer bytes.Buffer) {
 	val, _ := v.(string)
 
 	if isFinal {
@@ -153,7 +155,7 @@ func (self *Serializer) encodeString(v PhpValue, left, right rune, isFinal bool)
 	return
 }
 
-func (self *Serializer) encodeArray(v PhpValue, isFinal bool) (buffer bytes.Buffer) {
+func (self *Serializer) encodeArray(v phptype.PhpValue, isFinal bool) (buffer bytes.Buffer) {
 	var (
 		arrLen int
 		s      string
@@ -164,8 +166,8 @@ func (self *Serializer) encodeArray(v PhpValue, isFinal bool) (buffer bytes.Buff
 	}
 
 	switch v.(type) {
-	case PhpArray:
-		arrVal, _ := v.(PhpArray)
+	case phptype.PhpArray:
+		arrVal, _ := v.(phptype.PhpArray)
 		arrLen = len(arrVal)
 
 		buffer.WriteString(self.prepareLen(arrLen))
@@ -178,8 +180,8 @@ func (self *Serializer) encodeArray(v PhpValue, isFinal bool) (buffer bytes.Buff
 			buffer.WriteString(s)
 		}
 
-	case map[PhpValue]PhpValue:
-		arrVal, _ := v.(map[PhpValue]PhpValue)
+	case map[phptype.PhpValue]phptype.PhpValue:
+		arrVal, _ := v.(map[phptype.PhpValue]phptype.PhpValue)
 		arrLen = len(arrVal)
 
 		buffer.WriteString(self.prepareLen(arrLen))
@@ -191,8 +193,8 @@ func (self *Serializer) encodeArray(v PhpValue, isFinal bool) (buffer bytes.Buff
 			s, _ = self.Encode(v)
 			buffer.WriteString(s)
 		}
-	case PhpSlice:
-		arrVal, _ := v.(PhpSlice)
+	case phptype.PhpSlice:
+		arrVal, _ := v.(phptype.PhpSlice)
 		arrLen = len(arrVal)
 
 		buffer.WriteString(self.prepareLen(arrLen))
@@ -211,27 +213,27 @@ func (self *Serializer) encodeArray(v PhpValue, isFinal bool) (buffer bytes.Buff
 	return
 }
 
-func (self *Serializer) encodeObject(v PhpValue) (buffer bytes.Buffer) {
-	obj, _ := v.(*PhpObject)
+func (self *Serializer) encodeObject(v phptype.PhpValue) (buffer bytes.Buffer) {
+	obj, _ := v.(*phptype.PhpObject)
 	buffer.WriteRune(TOKEN_OBJECT)
-	buffer.WriteString(self.prepareClassName(obj.className))
-	encoded := self.encodeArray(obj.members, false)
+	buffer.WriteString(self.prepareClassName(obj.ClassName))
+	encoded := self.encodeArray(obj.Members, false)
 	buffer.WriteString(encoded.String())
 	return
 }
 
-func (self *Serializer) encodeSerialized(v PhpValue) (buffer bytes.Buffer) {
+func (self *Serializer) encodeSerialized(v phptype.PhpValue) (buffer bytes.Buffer) {
 	var serialized string
 
-	obj, _ := v.(*PhpObjectSerialized)
+	obj, _ := v.(*phptype.PhpObjectSerialized)
 	buffer.WriteRune(TOKEN_OBJECT_SERIALIZED)
-	buffer.WriteString(self.prepareClassName(obj.className))
+	buffer.WriteString(self.prepareClassName(obj.ClassName))
 
 	if self.encodeFunc == nil {
-		serialized = obj.GetData()
+		serialized = obj.Data
 	} else {
 		var err error
-		if serialized, err = self.encodeFunc(obj.GetValue()); err != nil {
+		if serialized, err = self.encodeFunc(obj.Value); err != nil {
 			self.saveError(err)
 		}
 	}
@@ -241,24 +243,24 @@ func (self *Serializer) encodeSerialized(v PhpValue) (buffer bytes.Buffer) {
 	return
 }
 
-func (self *Serializer) encodeSplArray(v PhpValue) bytes.Buffer {
+func (self *Serializer) encodeSplArray(v phptype.PhpValue) bytes.Buffer {
 	var buffer bytes.Buffer
-	obj, _ := v.(*PhpSplArray)
+	obj, _ := v.(*phptype.PhpSplArray)
 
 	buffer.WriteRune(TOKEN_SPL_ARRAY)
 	buffer.WriteRune(SEPARATOR_VALUE_TYPE)
 
-	encoded := self.encodeNumber(obj.flags)
+	encoded := self.encodeNumber(obj.Flags)
 	buffer.WriteString(encoded.String())
 
-	data, _ := self.Encode(obj.array)
+	data, _ := self.Encode(obj.Array)
 	buffer.WriteString(data)
 
 	buffer.WriteRune(SEPARATOR_VALUES)
 	buffer.WriteRune(TOKEN_SPL_ARRAY_MEMBERS)
 	buffer.WriteRune(SEPARATOR_VALUE_TYPE)
 
-	data, _ = self.Encode(obj.properties)
+	data, _ = self.Encode(obj.Properties)
 	buffer.WriteString(data)
 
 	return buffer

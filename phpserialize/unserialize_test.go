@@ -3,11 +3,13 @@ package phpserialize
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/imantung/phpsessgo/phptype"
 )
 
 func TestDecodeNil(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -23,7 +25,7 @@ func TestDecodeNil(t *testing.T) {
 
 func TestDecodeBoolTrue(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -41,7 +43,7 @@ func TestDecodeBoolTrue(t *testing.T) {
 
 func TestDecodeBoolFalse(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -59,7 +61,7 @@ func TestDecodeBoolFalse(t *testing.T) {
 
 func TestDecodeInt(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -77,7 +79,7 @@ func TestDecodeInt(t *testing.T) {
 
 func TestDecodeIntMinus(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -95,7 +97,7 @@ func TestDecodeIntMinus(t *testing.T) {
 
 func TestDecodeFloat64(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -113,7 +115,7 @@ func TestDecodeFloat64(t *testing.T) {
 
 func TestDecodeFloat64Minus(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -131,7 +133,7 @@ func TestDecodeFloat64Minus(t *testing.T) {
 
 func TestDecodeString(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -149,7 +151,7 @@ func TestDecodeString(t *testing.T) {
 
 func TestDecodeArray(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -157,21 +159,21 @@ func TestDecodeArray(t *testing.T) {
 	if val, err = decoder.Decode(); err != nil {
 		t.Errorf("Error while decoding array value: %v\n", err)
 	} else {
-		if arrVal, ok := val.(PhpArray); !ok {
-			t.Errorf("Unable to convert %v to PhpArray\n", val)
-		} else if v1, ok1 := arrVal[PhpValue(0)]; !ok1 {
+		if arrVal, ok := val.(phptype.PhpArray); !ok {
+			t.Errorf("Unable to convert %v to phptype.PhpArray\n", val)
+		} else if v1, ok1 := arrVal[phptype.PhpValue(0)]; !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `0` doest not exists\n")
 		} else if intV1, ok1 := v1.(int); !ok1 {
 			t.Errorf("Unable to convert %v to int\n", v1)
 		} else if intV1 != 10 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 10, intV1)
-		} else if v2, ok2 := arrVal[PhpValue(1)]; !ok2 {
+		} else if v2, ok2 := arrVal[phptype.PhpValue(1)]; !ok2 {
 			t.Errorf("Array value decoded incorrectly, key `1` doest not exists\n")
 		} else if intV2, ok2 := v2.(int); !ok2 {
 			t.Errorf("Unable to convert %v to int\n", v2)
 		} else if intV2 != 11 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 11, intV2)
-		} else if v3, ok3 := arrVal[PhpValue(2)]; !ok3 {
+		} else if v3, ok3 := arrVal[phptype.PhpValue(2)]; !ok3 {
 			t.Errorf("Array value decoded incorrectly, key `2` doest not exists\n")
 		} else if intV3, ok3 := v3.(int); !ok3 {
 			t.Errorf("Unable to convert %v to int\n", v3)
@@ -183,7 +185,7 @@ func TestDecodeArray(t *testing.T) {
 
 func TestDecodeArrayMap(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -191,8 +193,8 @@ func TestDecodeArrayMap(t *testing.T) {
 	if val, err = decoder.Decode(); err != nil {
 		t.Errorf("Error while decoding array value: %v\n", err)
 	} else {
-		if arrVal, ok := val.(PhpArray); !ok {
-			t.Errorf("Unable to convert %v to PhpArray\n", val)
+		if arrVal, ok := val.(phptype.PhpArray); !ok {
+			t.Errorf("Unable to convert %v to phptype.PhpArray\n", val)
 		} else if v1, ok1 := arrVal["foo"]; !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `foo` doest not exists\n")
 		} else if intV1, ok1 := v1.(int); !ok1 {
@@ -211,7 +213,7 @@ func TestDecodeArrayMap(t *testing.T) {
 
 func TestDecodeArrayArray(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -219,25 +221,25 @@ func TestDecodeArrayArray(t *testing.T) {
 	if val, err = decoder.Decode(); err != nil {
 		t.Errorf("Error while decoding array value: %v\n", err)
 	} else {
-		if arrVal, ok := val.(PhpArray); !ok {
-			t.Errorf("Unable to convert %v to PhpArray\n", val)
+		if arrVal, ok := val.(phptype.PhpArray); !ok {
+			t.Errorf("Unable to convert %v to phptype.PhpArray\n", val)
 		} else if v1, ok1 := arrVal["foo"]; !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `foo` doest not exists\n")
-		} else if innerArr, ok1 := v1.(PhpArray); !ok1 {
-			t.Errorf("Unable to convert %v to inner PhpArray\n", v1)
-		} else if inv1, inOk1 := innerArr[PhpValue(0)]; !inOk1 {
+		} else if innerArr, ok1 := v1.(phptype.PhpArray); !ok1 {
+			t.Errorf("Unable to convert %v to inner phptype.PhpArray\n", v1)
+		} else if inv1, inOk1 := innerArr[phptype.PhpValue(0)]; !inOk1 {
 			t.Errorf("Array value decoded incorrectly, key `0` doest not exists\n")
 		} else if inIntV1, inOk1 := inv1.(int); !inOk1 {
 			t.Errorf("Unable to convert %v to int\n", inv1)
 		} else if inIntV1 != 10 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 10, inIntV1)
-		} else if inv2, inOk2 := innerArr[PhpValue(1)]; !inOk2 {
+		} else if inv2, inOk2 := innerArr[phptype.PhpValue(1)]; !inOk2 {
 			t.Errorf("Array value decoded incorrectly, key `1` doest not exists\n")
 		} else if inIntV2, inOk2 := inv2.(int); !inOk2 {
 			t.Errorf("Unable to convert %v to int\n", inv2)
 		} else if inIntV2 != 11 {
 			t.Errorf("Array value decoded incorrectly, expected: %v, have got: %v\n", 11, inIntV2)
-		} else if inv3, inOk3 := innerArr[PhpValue(2)]; !inOk3 {
+		} else if inv3, inOk3 := innerArr[phptype.PhpValue(2)]; !inOk3 {
 			t.Errorf("Array value decoded incorrectly, key `2` doest not exists\n")
 		} else if inIntV3, inOk3 := inv3.(int); !inOk3 {
 			t.Errorf("Unable to convert %v to int\n", inv3)
@@ -255,7 +257,7 @@ func TestDecodeArrayArray(t *testing.T) {
 
 func TestDecodeObject(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -263,10 +265,10 @@ func TestDecodeObject(t *testing.T) {
 	if val, err = decoder.Decode(); err != nil {
 		t.Errorf("Error while decoding object value: %v\n", err)
 	} else {
-		if obj, ok := val.(*PhpObject); !ok {
-			t.Errorf("Unable to convert %v to *PhpObject\n", val)
-		} else if obj.GetClassName() != "Test" {
-			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "Test", obj.GetClassName())
+		if obj, ok := val.(*phptype.PhpObject); !ok {
+			t.Errorf("Unable to convert %v to *phptype.PhpObject\n", val)
+		} else if obj.ClassName != "Test" {
+			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "Test", obj.ClassName)
 		} else if value1, ok := obj.GetPublic("public"); !ok {
 			t.Errorf("Public member of object was decoded incorrectly, key `publice` doest not exists\n")
 		} else if intV1, ok := value1.(int); !ok {
@@ -291,7 +293,7 @@ func TestDecodeObject(t *testing.T) {
 
 func TestDecodeArrayOfObjects(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -299,14 +301,14 @@ func TestDecodeArrayOfObjects(t *testing.T) {
 	if val, err = decoder.Decode(); err != nil {
 		t.Errorf("Error while decoding array of objects value: %v\n", err)
 	} else {
-		if arrVal, ok := val.(PhpArray); !ok {
-			t.Errorf("Unable to convert %v to PhpArray\n", val)
-		} else if v1, ok1 := arrVal[PhpValue(0)]; !ok1 {
+		if arrVal, ok := val.(phptype.PhpArray); !ok {
+			t.Errorf("Unable to convert %v to phptype.PhpArray\n", val)
+		} else if v1, ok1 := arrVal[phptype.PhpValue(0)]; !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `0` doest not exists\n")
-		} else if obj1, ok1 := v1.(*PhpObject); !ok1 {
-			t.Errorf("Unable to convert %v to *PhpObject\n", v1)
-		} else if obj1.GetClassName() != "Test1" {
-			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "Test1", obj1.GetClassName())
+		} else if obj1, ok1 := v1.(*phptype.PhpObject); !ok1 {
+			t.Errorf("Unable to convert %v to *phptype.PhpObject\n", v1)
+		} else if obj1.ClassName != "Test1" {
+			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "Test1", obj1.ClassName)
 		} else if value1, ok := obj1.GetPublic("public"); !ok {
 			t.Errorf("Public member of object was decoded incorrectly, key `publice` doest not exists\n")
 		} else if intV1, ok := value1.(int); !ok {
@@ -325,12 +327,12 @@ func TestDecodeArrayOfObjects(t *testing.T) {
 			t.Errorf("Unable to convert %v to int\n", value3)
 		} else if intV3 != 13 {
 			t.Errorf("Private member of object was decoded incorrectly, expected: %v, have got: %v\n", 13, intV3)
-		} else if v2, ok2 := arrVal[PhpValue(1)]; !ok2 {
+		} else if v2, ok2 := arrVal[phptype.PhpValue(1)]; !ok2 {
 			t.Errorf("Array value decoded incorrectly, key `1` doest not exists\n")
-		} else if obj2, ok2 := v2.(*PhpObject); !ok2 {
-			t.Errorf("Unable to convert %v to *PhpObject\n", v2)
-		} else if obj2.GetClassName() != "Test2" {
-			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "Test2", obj2.GetClassName())
+		} else if obj2, ok2 := v2.(*phptype.PhpObject); !ok2 {
+			t.Errorf("Unable to convert %v to *phptype.PhpObject\n", v2)
+		} else if obj2.ClassName != "Test2" {
+			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "Test2", obj2.ClassName)
 		} else if value1, ok := obj2.GetPublic("public"); !ok {
 			t.Errorf("Public member of object was decoded incorrectly, key `publice` doest not exists\n")
 		} else if intV1, ok := value1.(int); !ok {
@@ -355,7 +357,7 @@ func TestDecodeArrayOfObjects(t *testing.T) {
 
 func TestDecodeObjectSerializable(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -363,19 +365,19 @@ func TestDecodeObjectSerializable(t *testing.T) {
 	if val, err = decoder.Decode(); err != nil {
 		t.Errorf("Error while decoding object value: %v\n", err)
 	} else {
-		if obj, ok := val.(*PhpObjectSerialized); !ok {
-			t.Errorf("Unable to convert %v to *PhpObjectSerialized\n", val)
-		} else if obj.GetClassName() != "TestSerializable" {
-			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "TestSerializable", obj.GetClassName())
-		} else if obj.GetData() != "foobar" {
-			t.Errorf("Object value decoded incorrectly, expected: %v, have got: %v\n", "foobar", obj.GetData())
+		if obj, ok := val.(*phptype.PhpObjectSerialized); !ok {
+			t.Errorf("Unable to convert %v to *phptype.PhpObjectSerialized\n", val)
+		} else if obj.ClassName != "TestSerializable" {
+			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "TestSerializable", obj.ClassName)
+		} else if obj.Data != "foobar" {
+			t.Errorf("Object value decoded incorrectly, expected: %v, have got: %v\n", "foobar", obj.Data)
 		}
 	}
 }
 
 func TestDecodeObjectSerializableArray(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 	)
 
@@ -384,16 +386,16 @@ func TestDecodeObjectSerializableArray(t *testing.T) {
 	if val, err = decoder.Decode(); err != nil {
 		t.Errorf("Error while decoding object value: %v\n", err)
 	} else {
-		if obj, ok := val.(*PhpObjectSerialized); !ok {
-			t.Errorf("Unable to convert %v to *PhpObjectSerialized\n", val)
-		} else if obj.GetClassName() != "TestSerializable1" {
-			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "TestSerializable1", obj.GetClassName())
-		} else if obj.GetData() != "a:2:{s:3:\"foo\";i:4;s:3:\"bar\";i:2;}" {
-			t.Errorf("Object value decoded incorrectly, expected: %v, have got: %v\n", "a:2:{s:3:\"foo\";i:4;s:3:\"bar\";i:2;}", obj.GetData())
-		} else if vv := obj.GetValue(); vv == nil {
-			t.Errorf("Object value decoded incorrectly, expected value as PhpArray, have got: %v\n", obj.GetValue())
-		} else if arrVal, ok := vv.(PhpArray); !ok {
-			t.Errorf("Unable to convert %v to PhpArray\n", vv)
+		if obj, ok := val.(*phptype.PhpObjectSerialized); !ok {
+			t.Errorf("Unable to convert %v to *phptype.PhpObjectSerialized\n", val)
+		} else if obj.ClassName != "TestSerializable1" {
+			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "TestSerializable1", obj.ClassName)
+		} else if obj.Data != "a:2:{s:3:\"foo\";i:4;s:3:\"bar\";i:2;}" {
+			t.Errorf("Object value decoded incorrectly, expected: %v, have got: %v\n", "a:2:{s:3:\"foo\";i:4;s:3:\"bar\";i:2;}", obj.Data)
+		} else if vv := obj.Value; vv == nil {
+			t.Errorf("Object value decoded incorrectly, expected value as phptype.PhpArray, have got: %v\n", obj.Value)
+		} else if arrVal, ok := vv.(phptype.PhpArray); !ok {
+			t.Errorf("Unable to convert %v to phptype.PhpArray\n", vv)
 		} else if v1, ok1 := arrVal["foo"]; !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `foo` doest not exists\n")
 		} else if intV1, ok1 := v1.(int); !ok1 {
@@ -412,12 +414,12 @@ func TestDecodeObjectSerializableArray(t *testing.T) {
 
 func TestDecodeObjectSerializableJSON(t *testing.T) {
 	var (
-		val PhpValue
+		val phptype.PhpValue
 		err error
 		f   SerializedDecodeFunc
 	)
 
-	f = func(s string) (PhpValue, error) {
+	f = func(s string) (phptype.PhpValue, error) {
 		var (
 			val map[string]int
 			err error
@@ -431,16 +433,16 @@ func TestDecodeObjectSerializableJSON(t *testing.T) {
 	if val, err = decoder.Decode(); err != nil {
 		t.Errorf("Error while decoding object value: %v\n", err)
 	} else {
-		if obj, ok := val.(*PhpObjectSerialized); !ok {
-			t.Errorf("Unable to convert %v to *PhpObjectSerialized\n", val)
-		} else if obj.GetClassName() != "TestSerializable2" {
-			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "TestSerializable2", obj.GetClassName())
-		} else if obj.GetData() != "{\"foo\":4,\"bar\":2}" {
-			t.Errorf("Object value decoded incorrectly, expected: %v, have got: %v\n", "{\"foo\":4,\"bar\":2}", obj.GetData())
-		} else if vv := obj.GetValue(); vv == nil {
-			t.Errorf("Object value decoded incorrectly, expected value as PhpArray, have got: %v\n", obj.GetValue())
+		if obj, ok := val.(*phptype.PhpObjectSerialized); !ok {
+			t.Errorf("Unable to convert %v to *phptype.PhpObjectSerialized\n", val)
+		} else if obj.ClassName != "TestSerializable2" {
+			t.Errorf("Object class name decoded incorrectly, expected: %s, have got: %s\n", "TestSerializable2", obj.ClassName)
+		} else if obj.Data != "{\"foo\":4,\"bar\":2}" {
+			t.Errorf("Object value decoded incorrectly, expected: %v, have got: %v\n", "{\"foo\":4,\"bar\":2}", obj.Data)
+		} else if vv := obj.Value; vv == nil {
+			t.Errorf("Object value decoded incorrectly, expected value as phptype.PhpArray, have got: %v\n", obj.Value)
 		} else if arrVal, ok := vv.(map[string]int); !ok {
-			t.Errorf("Unable to convert %v to PhpArray\n", vv)
+			t.Errorf("Unable to convert %v to phptype.PhpArray\n", vv)
 		} else if v1, ok1 := arrVal["foo"]; !ok1 {
 			t.Errorf("Array value decoded incorrectly, key `foo` doest not exists\n")
 		} else if v1 != 4 {
@@ -459,27 +461,27 @@ func TestDecodeSplArray(t *testing.T) {
 		t.Errorf("Can't decode array object: %v\n", err)
 	}
 
-	obj, ok := val.(*PhpSplArray)
+	obj, ok := val.(*phptype.PhpSplArray)
 	if !ok {
-		t.Errorf("Unable to convert %v to *PhpSplArray", val)
+		t.Errorf("Unable to convert %v to *phptype.PhpSplArray", val)
 	}
 
-	array, ok := obj.GetArray().(PhpArray)
+	array, ok := obj.Array.(phptype.PhpArray)
 	if !ok {
-		t.Errorf("Can't convert %v to PhpArray", obj.GetArray())
+		t.Errorf("Can't convert %v to phptype.PhpArray", obj.Array)
 	}
 
 	if len(array) != 1 || array["foo"] != "bar" {
 		t.Errorf("Can't find 'foo' key in %v", array)
 	}
 
-	properties, ok := obj.GetProperties().(PhpArray)
+	properties, ok := obj.Properties.(phptype.PhpArray)
 	if !ok {
-		t.Errorf("Can't convert %v to PhpArray", obj.GetProperties())
+		t.Errorf("Can't convert %v to phptype.PhpArray", obj.Properties)
 	}
 
 	if len(properties) > 0 {
-		t.Errorf("Expected empty PhpArray, got %v", properties)
+		t.Errorf("Expected empty phptype.PhpArray, got %v", properties)
 	}
 }
 
@@ -489,27 +491,27 @@ func TestDecodeSplArraySerialized(t *testing.T) {
 		t.Errorf("Error while decoding object value: %v\n", err)
 	}
 
-	obj, ok := objValue.(*PhpObjectSerialized)
+	obj, ok := objValue.(*phptype.PhpObjectSerialized)
 	if !ok {
-		t.Errorf("Unable to convert %v to *PhpObjectSerialized\n", objValue)
+		t.Errorf("Unable to convert %v to *phptype.PhpObjectSerialized\n", objValue)
 	}
 
-	array, ok := obj.GetValue().(*PhpSplArray)
+	array, ok := obj.Value.(*phptype.PhpSplArray)
 	if !ok {
-		t.Errorf("Unable to convert %v to *PhpSplArray\n", obj.GetValue())
+		t.Errorf("Unable to convert %v to *phptype.PhpSplArray\n", obj.Value)
 	}
 
-	if array.flags != 0 {
-		t.Errorf("SplArray flags expected: 0, got %v\n", array.flags)
+	if array.Flags != 0 {
+		t.Errorf("SplArray flags expected: 0, got %v\n", array.Flags)
 	}
 
-	arrayStorage, ok := array.array.(PhpArray)
+	arrayStorage, ok := array.Array.(phptype.PhpArray)
 	if !ok || arrayStorage == nil {
-		t.Errorf("SplArray.array expected: empty PhpArray, got %v", array.array)
+		t.Errorf("SplArray.Array expected: empty phptype.PhpArray, got %v", array.Array)
 	}
 
-	arrayProperties, ok := array.properties.(PhpArray)
+	arrayProperties, ok := array.Properties.(phptype.PhpArray)
 	if !ok || arrayProperties == nil {
-		t.Errorf("SplArray.properties expected: empty PhpArray, got %v", array.properties)
+		t.Errorf("SplArray.Properties expected: empty phptype.PhpArray, got %v", array.Properties)
 	}
 }
