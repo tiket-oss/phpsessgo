@@ -26,11 +26,11 @@ func TestRedisSessionHandler(t *testing.T) {
 
 		data, err := handler.Read("some-sessionID")
 		require.NoError(t, err)
-		require.Equal(t, []byte("some-data"), data)
+		require.Equal(t, "some-data", data)
 	})
 
 	t.Run("write data", func(t *testing.T) {
-		err := handler.Write("some-sessionID-2", []byte("some-data-2"))
+		err := handler.Write("some-sessionID-2", "some-data-2")
 		require.NoError(t, err)
 
 		val, _ := s.Get("PHPREDIS_SESSION:some-sessionID-2")
