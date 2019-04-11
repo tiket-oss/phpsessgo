@@ -31,7 +31,7 @@ func (self *PhpDecoder) Decode() (PhpSession, error) {
 	var (
 		name  string
 		err   error
-		value phptype.PhpValue
+		value phptype.Value
 	)
 	res := make(PhpSession)
 

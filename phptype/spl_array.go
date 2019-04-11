@@ -2,17 +2,17 @@ package phptype
 
 type PhpSplArray struct {
 	Flags      int
-	Array      PhpValue
-	Properties PhpValue
+	Array      Value
+	Properties Value
 }
 
-func NewPhpSplArray(array, properties PhpValue) *PhpSplArray {
+func NewPhpSplArray(array, properties Value) *PhpSplArray {
 	if array == nil {
-		array = make(PhpArray)
+		array = make(Array)
 	}
 
 	if properties == nil {
-		properties = make(PhpArray)
+		properties = make(Array)
 	}
 
 	return &PhpSplArray{
@@ -30,18 +30,18 @@ func NewPhpSplArray(array, properties PhpValue) *PhpSplArray {
 // 	self.flags = value
 // }
 //
-// func (self *PhpSplArray) GetArray() phptype.PhpValue {
+// func (self *PhpSplArray) GetArray() phptype.Value {
 // 	return self.array
 // }
 //
-// func (self *PhpSplArray) SetArray(value phptype.PhpValue) {
+// func (self *PhpSplArray) SetArray(value phptype.Value) {
 // 	self.array = value
 // }
 //
-// func (self *PhpSplArray) GetProperties() phptype.PhpValue {
+// func (self *PhpSplArray) GetProperties() phptype.Value {
 // 	return self.properties
 // }
 //
-// func (self *PhpSplArray) SetProperties(value phptype.PhpValue) {
+// func (self *PhpSplArray) SetProperties(value phptype.Value) {
 // 	self.properties = value
 // }

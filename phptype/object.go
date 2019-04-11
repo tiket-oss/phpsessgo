@@ -1,62 +1,62 @@
 package phptype
 
-type PhpObject struct {
+type Object struct {
 	ClassName string
-	Members   PhpArray
+	Members   Array
 }
 
-func NewPhpObject(className string) *PhpObject {
-	return &PhpObject{
+func NewObject(className string) *Object {
+	return &Object{
 		ClassName: className,
-		Members:   PhpArray{},
+		Members:   Array{},
 	}
 }
 
 //
-// func (self *PhpObject) GetClassName() string {
+// func (self *Object) GetClassName() string {
 // 	return self.ClassName
 // }
 //
-// func (self *PhpObject) SetClassName(name string) *PhpObject {
+// func (self *Object) SetClassName(name string) *Object {
 // 	self.ClassName = name
 // 	return self
 // }
 //
-// func (self *PhpObject) GetMembers() PhpArray {
+// func (self *Object) GetMembers() Array {
 // 	return self.Members
 // }
 //
-// func (self *PhpObject) SetMembers(members PhpArray) *PhpObject {
+// func (self *Object) SetMembers(members Array) *Object {
 // 	self.Members = members
 // 	return self
 // }
 
-func (self *PhpObject) GetPrivate(name string) (v PhpValue, ok bool) {
+func (self *Object) GetPrivate(name string) (v Value, ok bool) {
 	v, ok = self.Members["\x00"+self.ClassName+"\x00"+name]
 	return
 }
 
-func (self *PhpObject) SetPrivate(name string, value PhpValue) *PhpObject {
+func (self *Object) SetPrivate(name string, value Value) *Object {
 	self.Members["\x00"+self.ClassName+"\x00"+name] = value
 	return self
 }
 
-func (self *PhpObject) GetProtected(name string) (v PhpValue, ok bool) {
+func (self *Object) GetProtected(name string) (v Value, ok bool) {
 	v, ok = self.Members["\x00*\x00"+name]
 	return
 }
 
-func (self *PhpObject) SetProtected(name string, value PhpValue) *PhpObject {
+func (self *Object) SetProtected(name string, value Value) *Object {
 	self.Members["\x00*\x00"+name] = value
 	return self
 }
 
-func (self *PhpObject) GetPublic(name string) (v PhpValue, ok bool) {
+func (self *Object) GetPublic(name string) (v Value, ok bool) {
 	v, ok = self.Members[name]
 	return
 }
 
-func (self *PhpObject) SetPublic(name string, value PhpValue) *PhpObject {
+func (self *Object) SetPublic(name string, value Value) *Object {
 	self.Members[name] = value
 	return self
 }

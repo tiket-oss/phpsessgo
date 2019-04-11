@@ -4,72 +4,72 @@ import (
 	"testing"
 )
 
-func TestPhpValueString(t *testing.T) {
+func TestValueString(t *testing.T) {
 	var (
-		val      PhpValue = "string"
+		val      Value = "string"
 		expected string   = "string"
 	)
-	if newVal := PhpValueString(val); newVal != expected {
+	if newVal := ValueString(val); newVal != expected {
 		t.Errorf("Expected %q but got %q", expected, newVal)
 	}
 }
 
-func TestPhpValueBool(t *testing.T) {
+func TestValueBool(t *testing.T) {
 	var (
-		val      PhpValue = true
+		val      Value = true
 		expected bool     = true
 	)
-	if newVal := PhpValueBool(val); newVal != expected {
+	if newVal := ValueBool(val); newVal != expected {
 		t.Errorf("Expected %t but got %t", expected, newVal)
 	}
 }
 
-func TestPhpValueInt(t *testing.T) {
+func TestValueInt(t *testing.T) {
 	var (
-		val      PhpValue = 10
+		val      Value = 10
 		expected int      = 10
 	)
-	if newVal := PhpValueInt(val); newVal != expected {
+	if newVal := ValueInt(val); newVal != expected {
 		t.Errorf("Expected %d but got %d", expected, newVal)
 	}
 }
 
-func TestPhpValueInt64(t *testing.T) {
+func TestValueInt64(t *testing.T) {
 	var (
-		val      PhpValue = int64(10)
+		val      Value = int64(10)
 		expected int64    = 10
 	)
-	if newVal := PhpValueInt64(val); newVal != expected {
+	if newVal := ValueInt64(val); newVal != expected {
 		t.Errorf("Expected %d but got %d", expected, newVal)
 	}
 }
 
-func TestPhpValueUInt(t *testing.T) {
+func TestValueUInt(t *testing.T) {
 	var (
-		val      PhpValue = uint(10)
+		val      Value = uint(10)
 		expected uint     = 10
 	)
-	if newVal := PhpValueUInt(val); newVal != expected {
+	if newVal := ValueUInt(val); newVal != expected {
 		t.Errorf("Expected %d but got %d", expected, newVal)
 	}
 }
 
-func TestPhpValueUInt64(t *testing.T) {
+func TestValueUInt64(t *testing.T) {
 	var (
-		val      PhpValue = uint64(10)
+		val      Value = uint64(10)
 		expected uint64   = 10
 	)
-	if newVal := PhpValueUInt64(val); newVal != expected {
+	if newVal := ValueUInt64(val); newVal != expected {
 		t.Errorf("Expected %d but got %d", expected, newVal)
 	}
 }
 
-func TestPhpValueFloat64(t *testing.T) {
+func TestValueFloat64(t *testing.T) {
 	var (
-		val      PhpValue = float64(10.0)
+		val      Value = float64(10.0)
 		expected float64  = 10.0
 	)
-	if newVal := PhpValueFloat64(val); newVal != expected {
+	if newVal := ValueFloat64(val); newVal != expected {
 		t.Errorf("Expected %v but got %v", expected, newVal)
 	}
 }

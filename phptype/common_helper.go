@@ -4,12 +4,12 @@ import (
 	"strconv"
 )
 
-func PhpValueString(p PhpValue) (res string) {
+func ValueString(p Value) (res string) {
 	res, _ = p.(string)
 	return
 }
 
-func PhpValueBool(p PhpValue) (res bool) {
+func ValueBool(p Value) (res bool) {
 	switch p.(type) {
 	case bool:
 		res, _ = p.(bool)
@@ -20,7 +20,7 @@ func PhpValueBool(p PhpValue) (res bool) {
 	return
 }
 
-func PhpValueInt(p PhpValue) (res int) {
+func ValueInt(p Value) (res int) {
 	switch p.(type) {
 	case int:
 		res, _ = p.(int)
@@ -58,37 +58,37 @@ func PhpValueInt(p PhpValue) (res int) {
 	return
 }
 
-func PhpValueInt64(p PhpValue) (res int64) {
+func ValueInt64(p Value) (res int64) {
 	switch p.(type) {
 	case int64:
 		res = p.(int64)
 	default:
-		res = int64(PhpValueInt(p))
+		res = int64(ValueInt(p))
 	}
 	return
 }
 
-func PhpValueUInt(p PhpValue) (res uint) {
+func ValueUInt(p Value) (res uint) {
 	switch p.(type) {
 	case uint:
 		res = p.(uint)
 	default:
-		res = uint(PhpValueInt(p))
+		res = uint(ValueInt(p))
 	}
 	return
 }
 
-func PhpValueUInt64(p PhpValue) (res uint64) {
+func ValueUInt64(p Value) (res uint64) {
 	switch p.(type) {
 	case uint64:
 		res = p.(uint64)
 	default:
-		res = uint64(PhpValueInt(p))
+		res = uint64(ValueInt(p))
 	}
 	return
 }
 
-func PhpValueFloat64(p PhpValue) (res float64) {
+func ValueFloat64(p Value) (res float64) {
 	switch p.(type) {
 	case float64:
 		res, _ = p.(float64)
@@ -96,7 +96,7 @@ func PhpValueFloat64(p PhpValue) (res float64) {
 		str, _ := p.(string)
 		res, _ = strconv.ParseFloat(str, 64)
 	default:
-		return float64(PhpValueInt(p))
+		return float64(ValueInt(p))
 	}
 	return
 }

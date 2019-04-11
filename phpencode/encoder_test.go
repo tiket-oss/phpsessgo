@@ -72,9 +72,9 @@ func TestEncodeStringValue(t *testing.T) {
 
 func TestEncodeArrayValue(t *testing.T) {
 	data := PhpSession{
-		"arr": phptype.PhpArray{
+		"arr": phptype.Array{
 			// Zero element
-			//phptype.PhpValue(0): 5,
+			//phptype.Value(0): 5,
 			0:       5,
 			"test":  true,
 			"test2": nil,
@@ -92,7 +92,7 @@ func TestEncodeArrayValue(t *testing.T) {
 }
 
 func TestEncodeObjectValue(t *testing.T) {
-	obj := phptype.NewPhpObject("TestObject")
+	obj := phptype.NewObject("TestObject")
 	obj.SetPublic("a", 5)
 	obj.SetProtected("c", 8)
 	obj.SetPrivate("b", "priv")
@@ -111,7 +111,7 @@ func TestEncodeObjectValue(t *testing.T) {
 }
 
 func TestEncodeSerializableObjectValueNoFunc(t *testing.T) {
-	obj := phptype.NewPhpObjectSerialized("TestObject")
+	obj := phptype.NewObjectSerialized("TestObject")
 	obj.Data = "a:3:{s:1:\"a\";i:5;s:1:\"b\";s:4:\"priv\";s:1:\"c\";i:8;}"
 	data := PhpSession{
 		"obj": obj,
@@ -128,13 +128,13 @@ func TestEncodeSerializableObjectValueNoFunc(t *testing.T) {
 }
 
 func TestEncodeSerializableObjectValue(t *testing.T) {
-	arr := phptype.PhpArray{
+	arr := phptype.Array{
 		"a": 5,
 		"b": "priv",
 		"c": 8,
 	}
-	obj := phptype.NewPhpObjectSerialized("TestObject")
-	obj.Value = phptype.PhpValue(arr)
+	obj := phptype.NewObjectSerialized("TestObject")
+	obj.Value = phptype.Value(arr)
 	data := PhpSession{
 		"obj": obj,
 	}
@@ -158,12 +158,12 @@ func TestEncodeSerializableObjectValue(t *testing.T) {
 
 func TestEncodeSerializableObjectValueJSON(t *testing.T) {
 	var f phpserialize.SerializedEncodeFunc
-	f = func(v phptype.PhpValue) (string, error) {
+	f = func(v phptype.Value) (string, error) {
 		res, err := json.Marshal(v)
 		return string(res), err
 	}
 
-	obj := phptype.NewPhpObjectSerialized("Bar")
+	obj := phptype.NewObjectSerialized("Bar")
 	obj.Value = map[string]string{"public": "public"}
 	data := PhpSession{
 		"bar": obj,

@@ -1,40 +1,40 @@
 package phptype
 
-type PhpObjectSerialized struct {
+type ObjectSerialized struct {
 	ClassName string
 	Data      string
-	Value     PhpValue
+	Value     Value
 }
 
-func NewPhpObjectSerialized(className string) *PhpObjectSerialized {
-	return &PhpObjectSerialized{
+func NewObjectSerialized(className string) *ObjectSerialized {
+	return &ObjectSerialized{
 		ClassName: className,
 	}
 }
 
-// func (self *PhpObjectSerialized) GetClassName() string {
+// func (self *ObjectSerialized) GetClassName() string {
 // 	return self.className
 // }
 //
-// func (self *PhpObjectSerialized) SetClassName(name string) *PhpObjectSerialized {
+// func (self *ObjectSerialized) SetClassName(name string) *ObjectSerialized {
 // 	self.className = name
 // 	return self
 // }
 //
-// func (self *PhpObjectSerialized) GetData() string {
+// func (self *ObjectSerialized) GetData() string {
 // 	return self.data
 // }
 //
-// func (self *PhpObjectSerialized) SetData(data string) *PhpObjectSerialized {
+// func (self *ObjectSerialized) SetData(data string) *ObjectSerialized {
 // 	self.data = data
 // 	return self
 // }
 //
-// func (self *PhpObjectSerialized) GetValue() phptype.PhpValue {
+// func (self *ObjectSerialized) GetValue() phptype.Value {
 // 	return self.value
 // }
 //
-// func (self *PhpObjectSerialized) SetValue(value phptype.PhpValue) *PhpObjectSerialized {
+// func (self *ObjectSerialized) SetValue(value phptype.Value) *ObjectSerialized {
 // 	self.value = value
 // 	return self
 // }

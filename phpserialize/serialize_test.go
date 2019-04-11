@@ -10,7 +10,7 @@ import (
 
 func TestEncodeNil(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
@@ -28,7 +28,7 @@ func TestEncodeNil(t *testing.T) {
 
 func TestEncodeBoolTrue(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
@@ -46,7 +46,7 @@ func TestEncodeBoolTrue(t *testing.T) {
 
 func TestEncodeBoolFalse(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
@@ -64,7 +64,7 @@ func TestEncodeBoolFalse(t *testing.T) {
 
 func TestEncodeInt(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
@@ -82,7 +82,7 @@ func TestEncodeInt(t *testing.T) {
 
 func TestEncodeIntMinus(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
@@ -100,7 +100,7 @@ func TestEncodeIntMinus(t *testing.T) {
 
 func TestEncodeFloat64(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
@@ -118,7 +118,7 @@ func TestEncodeFloat64(t *testing.T) {
 
 func TestEncodeFloat64Minus(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
@@ -136,7 +136,7 @@ func TestEncodeFloat64Minus(t *testing.T) {
 
 func TestEncodeString(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
@@ -154,12 +154,12 @@ func TestEncodeString(t *testing.T) {
 
 func TestEncodeArray(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
 
-	source = phptype.PhpArray{
+	source = phptype.Array{
 		0: 10,
 		1: 11,
 		2: 12,
@@ -180,12 +180,12 @@ func TestEncodeArray(t *testing.T) {
 
 func TestEncodeArray2(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
 
-	source = map[phptype.PhpValue]phptype.PhpValue{
+	source = map[phptype.Value]phptype.Value{
 		0: 10,
 		1: 11,
 		2: 12,
@@ -206,12 +206,12 @@ func TestEncodeArray2(t *testing.T) {
 
 func TestEncodeArrayMap(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
 
-	source = phptype.PhpArray{
+	source = phptype.Array{
 		"foo": 4,
 		"bar": 2,
 	}
@@ -229,13 +229,13 @@ func TestEncodeArrayMap(t *testing.T) {
 
 func TestEncodeArrayArray(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
 
-	source = phptype.PhpArray{
-		"foo": phptype.PhpArray{
+	source = phptype.Array{
+		"foo": phptype.Array{
 			0: 10,
 		},
 		"bar": 2,
@@ -254,12 +254,12 @@ func TestEncodeArrayArray(t *testing.T) {
 
 func TestEncodeObject(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
 
-	obj := phptype.NewPhpObject("Test")
+	obj := phptype.NewObject("Test")
 	obj.SetPublic("public", 1)
 	obj.SetProtected("protected", 2)
 	obj.SetPrivate("private", 3)
@@ -283,22 +283,22 @@ func TestEncodeObject(t *testing.T) {
 
 func TestEncodeArrayOfObjects(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
 
-	obj1 := phptype.NewPhpObject("Test1")
+	obj1 := phptype.NewObject("Test1")
 	obj1.SetPublic("public", 11)
 	obj1.SetProtected("protected", 12)
 	obj1.SetPrivate("private", 13)
 
-	obj2 := phptype.NewPhpObject("Test2")
+	obj2 := phptype.NewObject("Test2")
 	obj2.SetPublic("public", 21)
 	obj2.SetProtected("protected", 22)
 	obj2.SetPrivate("private", 23)
 
-	source = phptype.PhpArray{
+	source = phptype.Array{
 		0: obj1,
 		1: obj2,
 	}
@@ -330,12 +330,12 @@ func TestEncodeArrayOfObjects(t *testing.T) {
 
 func TestEncodeObjectSerializable(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
 
-	obj := phptype.NewPhpObjectSerialized("TestSerializable")
+	obj := phptype.NewObjectSerialized("TestSerializable")
 	obj.Data = "foobar"
 
 	source = obj
@@ -351,13 +351,13 @@ func TestEncodeObjectSerializable(t *testing.T) {
 
 func TestEncodeObjectSerializableArray(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 	)
 
-	obj := phptype.NewPhpObjectSerialized("TestSerializable1")
-	obj.Value = phptype.PhpArray{
+	obj := phptype.NewObjectSerialized("TestSerializable1")
+	obj.Value = phptype.Array{
 		"foo": 4,
 		"bar": 2,
 	}
@@ -380,13 +380,13 @@ func TestEncodeObjectSerializableArray(t *testing.T) {
 
 func TestEncodeObjectSerializableJSON(t *testing.T) {
 	var (
-		source phptype.PhpValue
+		source phptype.Value
 		val    string
 		err    error
 		f      SerializedEncodeFunc
 	)
 
-	f = func(v phptype.PhpValue) (string, error) {
+	f = func(v phptype.Value) (string, error) {
 		var (
 			res []byte
 			err error
@@ -395,7 +395,7 @@ func TestEncodeObjectSerializableJSON(t *testing.T) {
 		return string(res), err
 	}
 
-	obj := phptype.NewPhpObjectSerialized("TestSerializable2")
+	obj := phptype.NewObjectSerialized("TestSerializable2")
 	obj.Value = map[string]int{
 		"foo": 4,
 		"bar": 2,
@@ -418,7 +418,7 @@ func TestEncodeObjectSerializableJSON(t *testing.T) {
 }
 
 func TestEncodeSplArray(t *testing.T) {
-	obj := phptype.NewPhpSplArray(phptype.PhpArray{"foo": 42}, nil)
+	obj := phptype.NewPhpSplArray(phptype.Array{"foo": 42}, nil)
 
 	data, err := Serialize(obj)
 	if err != nil {

@@ -12,7 +12,7 @@ import (
 
 const UNSERIALIZABLE_OBJECT_MAX_LEN = 10 * 1024 * 1024 * 1024
 
-func UnSerialize(s string) (phptype.PhpValue, error) {
+func UnSerialize(s string) (phptype.Value, error) {
 	decoder := NewUnSerializer(s)
 	decoder.SetSerializedDecodeFunc(SerializedDecodeFunc(UnSerialize))
 	return decoder.Decode()
@@ -39,12 +39,12 @@ func (self *UnSerializer) SetSerializedDecodeFunc(f SerializedDecodeFunc) {
 	self.decodeFunc = f
 }
 
-func (self *UnSerializer) Decode() (phptype.PhpValue, error) {
+func (self *UnSerializer) Decode() (phptype.Value, error) {
 	if self.r == nil {
 		self.r = strings.NewReader(self.source)
 	}
 
-	var value phptype.PhpValue
+	var value phptype.Value
 
 	if token, _, err := self.r.ReadRune(); err == nil {
 		switch token {
@@ -77,12 +77,12 @@ func (self *UnSerializer) Decode() (phptype.PhpValue, error) {
 	return value, self.lastErr
 }
 
-func (self *UnSerializer) decodeNull() phptype.PhpValue {
+func (self *UnSerializer) decodeNull() phptype.Value {
 	self.expect(SEPARATOR_VALUES)
 	return nil
 }
 
-func (self *UnSerializer) decodeBool() phptype.PhpValue {
+func (self *UnSerializer) decodeBool() phptype.Value {
 	var (
 		raw rune
 		err error
@@ -97,11 +97,11 @@ func (self *UnSerializer) decodeBool() phptype.PhpValue {
 	return raw == '1'
 }
 
-func (self *UnSerializer) decodeNumber(isFloat bool) phptype.PhpValue {
+func (self *UnSerializer) decodeNumber(isFloat bool) phptype.Value {
 	var (
 		raw string
 		err error
-		val phptype.PhpValue
+		val phptype.Value
 	)
 	self.expect(SEPARATOR_VALUE_TYPE)
 
@@ -122,10 +122,10 @@ func (self *UnSerializer) decodeNumber(isFloat bool) phptype.PhpValue {
 	return val
 }
 
-func (self *UnSerializer) decodeString(left, right rune, isFinal bool) phptype.PhpValue {
+func (self *UnSerializer) decodeString(left, right rune, isFinal bool) phptype.Value {
 	var (
 		err     error
-		val     phptype.PhpValue
+		val     phptype.Value
 		strLen  int
 		readLen int
 	)
@@ -153,9 +153,9 @@ func (self *UnSerializer) decodeString(left, right rune, isFinal bool) phptype.P
 	return val
 }
 
-func (self *UnSerializer) decodeArray() phptype.PhpValue {
+func (self *UnSerializer) decodeArray() phptype.Value {
 	var arrLen int
-	val := make(phptype.PhpArray)
+	val := make(phptype.Array)
 
 	arrLen = self.readLen()
 	self.expect(DELIMITER_OBJECT_LEFT)
@@ -185,19 +185,19 @@ func (self *UnSerializer) decodeArray() phptype.PhpValue {
 	return val
 }
 
-func (self *UnSerializer) decodeObject() phptype.PhpValue {
-	val := &phptype.PhpObject{
+func (self *UnSerializer) decodeObject() phptype.Value {
+	val := &phptype.Object{
 		ClassName: self.readClassName(),
 	}
 
 	rawMembers := self.decodeArray()
-	val.Members, _ = rawMembers.(phptype.PhpArray)
+	val.Members, _ = rawMembers.(phptype.Array)
 
 	return val
 }
 
-func (self *UnSerializer) decodeSerialized() phptype.PhpValue {
-	val := &phptype.PhpObjectSerialized{
+func (self *UnSerializer) decodeSerialized() phptype.Value {
+	val := &phptype.ObjectSerialized{
 		ClassName: self.readClassName(),
 	}
 
@@ -214,7 +214,7 @@ func (self *UnSerializer) decodeSerialized() phptype.PhpValue {
 	return val
 }
 
-func (self *UnSerializer) decodeReference() phptype.PhpValue {
+func (self *UnSerializer) decodeReference() phptype.Value {
 	self.expect(SEPARATOR_VALUE_TYPE)
 	if _, err := self.readUntil(SEPARATOR_VALUES); err != nil {
 		self.saveError(fmt.Errorf("phpserialize: Error while reading reference value: %v", err))
@@ -285,7 +285,7 @@ func (self *UnSerializer) saveError(err error) {
 	}
 }
 
-func (self *UnSerializer) decodeSplArray() phptype.PhpValue {
+func (self *UnSerializer) decodeSplArray() phptype.Value {
 	var err error
 	val := &phptype.PhpSplArray{}
 
@@ -297,7 +297,7 @@ func (self *UnSerializer) decodeSplArray() phptype.PhpValue {
 		self.saveError(fmt.Errorf("phpserialize: Unable to read flags of SplArray"))
 		return nil
 	}
-	val.Flags = phptype.PhpValueInt(flags)
+	val.Flags = phptype.ValueInt(flags)
 
 	if val.Array, err = self.Decode(); err != nil {
 		self.saveError(fmt.Errorf("phpserialize: Can't parse SplArray: %v", err))

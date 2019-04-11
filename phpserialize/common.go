@@ -36,6 +36,6 @@ func Debug(value bool) {
 	debugMode = value
 }
 
-type SerializedDecodeFunc func(string) (phptype.PhpValue, error)
+type SerializedDecodeFunc func(string) (phptype.Value, error)
 
-type SerializedEncodeFunc func(phptype.PhpValue) (string, error)
+type SerializedEncodeFunc func(phptype.Value) (string, error)
