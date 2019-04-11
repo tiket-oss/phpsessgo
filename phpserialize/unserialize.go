@@ -297,7 +297,7 @@ func (self *UnSerializer) decodeSplArray() phptype.Value {
 		self.saveError(fmt.Errorf("phpserialize: Unable to read flags of SplArray"))
 		return nil
 	}
-	val.Flags = phptype.ValueInt(flags)
+	val.Flags = flags.(int)
 
 	if val.Array, err = self.Decode(); err != nil {
 		self.saveError(fmt.Errorf("phpserialize: Can't parse SplArray: %v", err))
