@@ -42,8 +42,8 @@ func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session 
 	}
 
 	if m.Handler != nil {
-		b, _ := m.Handler.Read(sid)
-		fmt.Println(string(b))
+		data, _ := m.Handler.Read(sid)
+		fmt.Println(data)
 	}
 
 	session = NewSession(sid)

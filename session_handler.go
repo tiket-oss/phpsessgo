@@ -5,6 +5,6 @@ package phpsessgo
 type SessionHandler interface {
 	Close()
 	// Gc(maxLifeTime int) int
-	Read(sessionID string) ([]byte, error)
-	Write(sessionID string, sessionData []byte) error
+	Read(sessionID string) (string, error)
+	Write(sessionID string, sessionData string) error
 }

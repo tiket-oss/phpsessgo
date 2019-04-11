@@ -24,12 +24,12 @@ func (h *RedisSessionHandler) Close() {
 	}
 }
 
-func (h *RedisSessionHandler) Read(sessionID string) ([]byte, error) {
-	return h.Client.Get(sessionRedisKey(sessionID)).Bytes()
+func (h *RedisSessionHandler) Read(sessionID string) (string, error) {
+	return h.Client.Get(sessionRedisKey(sessionID)).Result()
 }
 
-func (h *RedisSessionHandler) Write(sessionID string, bytes []byte) error {
-	err := h.Client.Set(sessionRedisKey(sessionID), bytes, 0).Err()
+func (h *RedisSessionHandler) Write(sessionID string, sessionData string) error {
+	err := h.Client.Set(sessionRedisKey(sessionID), sessionData, 0).Err()
 	return err
 }
 
