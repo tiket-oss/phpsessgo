@@ -1,10 +1,10 @@
 package phpsessgo
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-redis/redis"
+	"github.com/yvasiyarov/php_session_decoder"
 )
 
 // SessionManager handle session creation/modification
@@ -32,21 +32,28 @@ func NewSessionManager(config SessionConfig) (*SessionManager, error) {
 
 // Start is adoption of PHP start_session() to return current active session
 func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session *Session, err error) {
+	var raw string
+	var phpSession php_session_decoder.PhpSession
+
 	sid := m.getFromCookies(r.Cookies())
 	if sid == "" {
 		sid = m.SIDCreator.CreateSID()
 		m.setToCookies(w, sid)
+	} else if m.Handler != nil {
+		raw, err = m.Handler.Read(sid)
+		if err != nil {
+			return
+		}
 
-		session = NewSession(sid)
-		return
-	}
-
-	if m.Handler != nil {
-		data, _ := m.Handler.Read(sid)
-		fmt.Println(data)
+		decoder := php_session_decoder.NewPhpDecoder(raw)
+		phpSession, err = decoder.Decode()
+		if err != nil {
+			return
+		}
 	}
 
 	session = NewSession(sid)
+	session.Value = phpSession
 	return
 }
 

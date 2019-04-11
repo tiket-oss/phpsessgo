@@ -1,9 +1,11 @@
 package phpsessgo
 
+import "github.com/yvasiyarov/php_session_decoder"
+
 // Session handle creation/modification of session parametr
 type Session struct {
 	sid   string
-	Value map[string]interface{}
+	Value php_session_decoder.PhpSession
 }
 
 // NewSession create new instance of Session

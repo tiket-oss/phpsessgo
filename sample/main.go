@@ -17,7 +17,7 @@ var sessionManager *phpsessgo.SessionManager
 
 func main() {
 	flag.Parse()
-	fmt.Printf(`Listen and serve at %s`, *addr)
+	fmt.Printf("Listen and serve at %s\n", *addr)
 
 	var err error
 
@@ -37,9 +37,15 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 	session, err := sessionManager.Start(w, r)
 	if err != nil {
 		w.Write([]byte(err.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 
-	w.Write([]byte(session.SessionID()))
+	if session != nil {
+		w.Write([]byte(session.SessionID()))
+		w.Write([]byte("\n"))
+		w.Write([]byte(session.Value["spike01"].(string)))
+	}
+
 }
 
 func fatalIfError(err error) {
