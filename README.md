@@ -7,13 +7,13 @@ The project aimed to imitating PHP Session Management in as much aspect as possi
 Create new session manager
 ```go
 sessionManager := &SessionManager{
-  SessionName: DefaultSessionName,
-  SIDCreator:  &UUIDCreator{},
-  Handler: &RedisSessionHandler{
-    Client:         client,
-    RedisKeyPrefix: DefaultRedisKeyPrefix,
-  },
-  Encoder: &PHPSessionEncoder{},
+	SessionName: DefaultSessionName,
+	SIDCreator:  &UUIDCreator{},
+	Handler: &RedisSessionHandler{
+		Client:         client,
+		RedisKeyPrefix: DefaultRedisKeyPrefix,
+	},
+	Encoder: &PHPSessionEncoder{},
 }
 ```
 
@@ -27,7 +27,7 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-  defer sessionManager.Save(session)
+	defer sessionManager.Save(session)
 
 	// PHP: $_SESSION["hello"] = "world";
 	session.Value["hello"] = "world"
