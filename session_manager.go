@@ -32,27 +32,32 @@ func NewSessionManager(config SessionConfig) (*SessionManager, error) {
 
 // Start is adoption of PHP start_session() to return current active session
 func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session *Session, err error) {
+	session = NewSession()
+
 	var raw string
 	var phpSession phpencode.PhpSession
 
-	sid := m.getFromCookies(r.Cookies())
-	if sid == "" {
-		sid = m.SIDCreator.CreateSID()
-		m.setToCookies(w, sid)
-	} else if m.Handler != nil {
-		raw, err = m.Handler.Read(sid)
-		if err != nil {
-			return
-		}
+	sessionID := m.getFromCookies(r.Cookies())
 
-		phpSession, err = phpencode.Decode(raw)
-		if err != nil {
-			return
-		}
+	if sessionID == "" {
+		sessionID = m.SIDCreator.CreateSID()
+		session.SessionID = sessionID
+		m.setToCookies(w, sessionID)
+		return
 	}
 
-	session = NewSession(sid)
+	session.SessionID = sessionID
+	raw, err = m.Handler.Read(sessionID)
+	if err != nil {
+		return
+	}
+
+	phpSession, err = phpencode.Decode(raw)
+	if err != nil {
+		return
+	}
 	session.Value = phpSession
+
 	return
 }
 

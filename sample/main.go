@@ -36,16 +36,11 @@ func main() {
 func handleFunc(w http.ResponseWriter, r *http.Request) {
 	session, err := sessionManager.Start(w, r)
 	if err != nil {
-		w.Write([]byte(err.Error()))
 		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
 	}
-
-	if session != nil {
-		w.Write([]byte(session.SessionID()))
-		w.Write([]byte("\n"))
-		w.Write([]byte(session.Value["spike01"].(string)))
-	}
-
+	w.Write([]byte(session.SessionID))
 }
 
 func fatalIfError(err error) {

@@ -6,5 +6,5 @@ type SessionHandler interface {
 	Close()
 	// Gc(maxLifeTime int) int
 	Read(sessionID string) (string, error)
-	Write(sessionID string, sessionData string) error
+	Write(sessionID, sessionData string) error
 }

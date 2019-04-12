@@ -24,8 +24,13 @@ func (h *RedisSessionHandler) Close() {
 	}
 }
 
-func (h *RedisSessionHandler) Read(sessionID string) (string, error) {
-	return h.Client.Get(sessionRedisKey(sessionID)).Result()
+func (h *RedisSessionHandler) Read(sessionID string) (data string, err error) {
+	data, err = h.Client.Get(sessionRedisKey(sessionID)).Result()
+	if err != nil && err.Error() == "redis: nil" {
+		data = ""
+		err = nil
+	}
+	return
 }
 
 func (h *RedisSessionHandler) Write(sessionID string, sessionData string) error {
