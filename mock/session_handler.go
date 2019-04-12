@@ -45,10 +45,10 @@ func (mr *MockSessionHandlerMockRecorder) Close() *gomock.Call {
 }
 
 // Read mocks base method
-func (m *MockSessionHandler) Read(sessionID string) ([]byte, error) {
+func (m *MockSessionHandler) Read(sessionID string) (string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Read", sessionID)
-	ret0, _ := ret[0].([]byte)
+	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,7 +60,7 @@ func (mr *MockSessionHandlerMockRecorder) Read(sessionID interface{}) *gomock.Ca
 }
 
 // Write mocks base method
-func (m *MockSessionHandler) Write(sessionID string, sessionData []byte) error {
+func (m *MockSessionHandler) Write(sessionID, sessionData string) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Write", sessionID, sessionData)
 	ret0, _ := ret[0].(error)
