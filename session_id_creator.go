@@ -5,12 +5,3 @@ package phpsessgo
 type SessionIDCreator interface {
 	CreateSID() string
 }
-
-type sessionIDCreator struct {
-	SessionIDCreator
-}
-
-func (g *sessionIDCreator) CreateSID() string {
-	// INFO: Reference at https://stackoverflow.com/questions/12240922/what-is-the-length-of-a-php-session-id-string
-	return "thedroppedcookiehasgoldinit"
-}

@@ -6,15 +6,11 @@ import (
 	"github.com/go-redis/redis"
 )
 
-const (
-	RedisSessionName = "PHPREDIS_SESSION"
-)
-
 // RedisSessionHandler session management using redis
 type RedisSessionHandler struct {
 	SessionHandler
-	Client      *redis.Client
-	SessionName string
+	Client         *redis.Client
+	RedisKeyPrefix string
 }
 
 // Close the resource
@@ -25,7 +21,7 @@ func (h *RedisSessionHandler) Close() {
 }
 
 func (h *RedisSessionHandler) Read(sessionID string) (data string, err error) {
-	data, err = h.Client.Get(sessionRedisKey(sessionID)).Result()
+	data, err = h.Client.Get(h.sessionRedisKey(sessionID)).Result()
 	if err != nil && err.Error() == "redis: nil" {
 		data = ""
 		err = nil
@@ -34,10 +30,10 @@ func (h *RedisSessionHandler) Read(sessionID string) (data string, err error) {
 }
 
 func (h *RedisSessionHandler) Write(sessionID string, sessionData string) error {
-	err := h.Client.Set(sessionRedisKey(sessionID), sessionData, 0).Err()
+	err := h.Client.Set(h.sessionRedisKey(sessionID), sessionData, 0).Err()
 	return err
 }
 
-func sessionRedisKey(sessionID string) string {
-	return fmt.Sprintf("%s:%s", RedisSessionName, sessionID)
+func (h *RedisSessionHandler) sessionRedisKey(sessionID string) string {
+	return fmt.Sprintf("%s%s", h.RedisKeyPrefix, sessionID)
 }

@@ -3,7 +3,6 @@ package phpsessgo
 import (
 	"net/http"
 
-	"github.com/go-redis/redis"
 	"github.com/imantung/phpsessgo/phpencode"
 )
 
@@ -13,22 +12,6 @@ type SessionManager struct {
 	SIDCreator  SessionIDCreator
 	Handler     SessionHandler
 	Encoder     SessionEncoder
-}
-
-// NewSessionManager create new instance of SessionManager
-func NewSessionManager(config SessionConfig) (*SessionManager, error) {
-	sessionManager := &SessionManager{
-		SessionName: config.Name,
-		SIDCreator:  &sessionIDCreator{},
-		Handler: &RedisSessionHandler{
-			Client: redis.NewClient(&redis.Options{
-				Addr: "localhost:6379",
-			}),
-			SessionName: config.Name,
-		},
-		Encoder: &sessionEncoder{},
-	}
-	return sessionManager, nil
 }
 
 // Start is adoption of PHP start_session() to return current active session

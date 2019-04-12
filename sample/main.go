@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-redis/redis"
 	"github.com/imantung/phpsessgo"
 )
 
@@ -22,9 +23,10 @@ func main() {
 	var err error
 
 	// initiatte SessionManager
-	sessionConfig := phpsessgo.DefaultSessionConfig()
-	sessionManager, err = phpsessgo.NewSessionManager(sessionConfig)
-	fatalIfError(err)
+	client := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+	})
+	sessionManager = phpsessgo.NewRedisSessionManager(client)
 
 	// server
 	http.HandleFunc("/", handleFunc)
@@ -40,7 +42,7 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	session.Value["lalalala"] = "lilili"
+	session.Value["hello"] = "world"
 
 	err = sessionManager.Save(session)
 	if err != nil {

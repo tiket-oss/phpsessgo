@@ -13,14 +13,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestSessionManager_New(t *testing.T) {
-	config := phpsessgo.SessionConfig{
-		Name: "some-session-name",
-	}
-	manager, _ := phpsessgo.NewSessionManager(config)
-	require.Equal(t, "some-session-name", manager.SessionName)
-}
-
 func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -73,7 +65,7 @@ func TestSessionManager_Start_ExistingSessionID(t *testing.T) {
 		require.EqualError(t, err, "some-error")
 	})
 
-	t.Run("get data from handler", func(t *testing.T) {
+	t.Run("decode success", func(t *testing.T) {
 		handler.EXPECT().Read("some-session-id").Return("some-data", nil)
 		encoder.EXPECT().Decode("some-data").Return(phpencode.PhpSession{}, nil)
 
@@ -81,6 +73,14 @@ func TestSessionManager_Start_ExistingSessionID(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, "some-session-id", session.SessionID)
 	})
+
+	t.Run("decode failed", func(t *testing.T) {
+		handler.EXPECT().Read("some-session-id").Return("some-data", nil)
+		encoder.EXPECT().Decode("some-data").Return(nil, fmt.Errorf("some-error"))
+		_, err := manager.Start(nil, req)
+		require.EqualError(t, err, "some-error")
+	})
+
 }
 
 func TestSessionManager_Save(t *testing.T) {
@@ -101,9 +101,19 @@ func TestSessionManager_Save(t *testing.T) {
 	session := phpsessgo.NewSession()
 	session.SessionID = "some-session-id"
 
-	encoder.EXPECT().Encode(session.Value).Return("encoded-data", nil)
-	handler.EXPECT().Write("some-session-id", "encoded-data").Return(nil)
+	t.Run("encode success", func(t *testing.T) {
+		encoder.EXPECT().Encode(session.Value).Return("encoded-data", nil)
+		handler.EXPECT().Write("some-session-id", "encoded-data").Return(nil)
 
-	manager.Save(session)
+		err := manager.Save(session)
+		require.NoError(t, err)
+	})
+
+	t.Run("decode error", func(t *testing.T) {
+		encoder.EXPECT().Encode(session.Value).Return("encoded-data", fmt.Errorf("some-error"))
+
+		err := manager.Save(session)
+		require.EqualError(t, err, "some-error")
+	})
 
 }

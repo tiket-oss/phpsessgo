@@ -17,7 +17,7 @@ func TestRedisSessionHandler(t *testing.T) {
 		Client: redis.NewClient(&redis.Options{
 			Addr: s.Addr(),
 		}),
-		SessionName: "some-sessionName",
+		RedisKeyPrefix: "PHPREDIS_SESSION:",
 	}
 	defer handler.Close()
 
@@ -27,6 +27,14 @@ func TestRedisSessionHandler(t *testing.T) {
 		data, err := handler.Read("some-sessionID")
 		require.NoError(t, err)
 		require.Equal(t, "some-data", data)
+	})
+
+	t.Run("read not existing data", func(t *testing.T) {
+		s.Set("PHPREDIS_SESSION:some-sessionID", "some-data")
+
+		data, err := handler.Read("not-exist")
+		require.NoError(t, err)
+		require.Equal(t, "", data)
 	})
 
 	t.Run("write data", func(t *testing.T) {
