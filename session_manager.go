@@ -12,11 +12,11 @@ type SessionManager struct {
 	SessionName string
 	SIDCreator  SessionIDCreator
 	Handler     SessionHandler
+	Encoder     SessionEncoder
 }
 
 // NewSessionManager create new instance of SessionManager
 func NewSessionManager(config SessionConfig) (*SessionManager, error) {
-
 	sessionManager := &SessionManager{
 		SessionName: config.Name,
 		SIDCreator:  &sessionIDCreator{},
@@ -26,6 +26,7 @@ func NewSessionManager(config SessionConfig) (*SessionManager, error) {
 			}),
 			SessionName: config.Name,
 		},
+		Encoder: &sessionEncoder{},
 	}
 	return sessionManager, nil
 }
@@ -52,13 +53,23 @@ func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session 
 		return
 	}
 
-	phpSession, err = phpencode.Decode(raw)
+	phpSession, err = m.Encoder.Decode(raw)
 	if err != nil {
 		return
 	}
 	session.Value = phpSession
 
 	return
+}
+
+// Save the session
+func (m *SessionManager) Save(session *Session) error {
+	sessionData, err := m.Encoder.Encode(session.Value)
+	if err != nil {
+		return err
+	}
+
+	return m.Handler.Write(session.SessionID, sessionData)
 }
 
 func (m *SessionManager) getFromCookies(cookies []*http.Cookie) string {

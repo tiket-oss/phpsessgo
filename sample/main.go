@@ -40,6 +40,15 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+	session.Value["lalalala"] = "lilili"
+
+	err = sessionManager.Save(session)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+		return
+	}
+
 	w.Write([]byte(session.SessionID))
 }
 

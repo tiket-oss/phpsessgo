@@ -15,8 +15,3 @@ func NewSession() *Session {
 		Value:     make(phpencode.PhpSession),
 	}
 }
-
-// Save session to session source
-func (s *Session) Save() error {
-	return nil
-}
