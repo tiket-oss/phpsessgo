@@ -32,7 +32,7 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 	// PHP: $_SESSION["hello"] = "world";
 	session.Value["hello"] = "world"
 
-  // PHP: session_id();
+	// PHP: session_id();
 	w.Write([]byte(session.SessionID))
 }
 ```
