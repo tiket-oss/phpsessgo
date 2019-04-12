@@ -36,21 +36,19 @@ func main() {
 }
 
 func handleFunc(w http.ResponseWriter, r *http.Request) {
+	// PHP: session_start();
 	session, err := sessionManager.Start(w, r)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
 		return
 	}
+	defer sessionManager.Save(session)
+
+	// PHP: $_SESSION["hello"] = "world";
 	session.Value["hello"] = "world"
 
-	err = sessionManager.Save(session)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-
+	// PHP: session_Id();
 	w.Write([]byte(session.SessionID))
 }
 
