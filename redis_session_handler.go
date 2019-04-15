@@ -2,6 +2,7 @@ package phpsessgo
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-redis/redis"
 )
@@ -9,6 +10,7 @@ import (
 // RedisSessionHandler session management using redis
 type RedisSessionHandler struct {
 	SessionHandler
+	Expiration     time.Duration
 	Client         *redis.Client
 	RedisKeyPrefix string
 }
@@ -30,7 +32,7 @@ func (h *RedisSessionHandler) Read(sessionID string) (data string, err error) {
 }
 
 func (h *RedisSessionHandler) Write(sessionID string, sessionData string) error {
-	err := h.Client.Set(h.sessionRedisKey(sessionID), sessionData, 0).Err()
+	err := h.Client.Set(h.sessionRedisKey(sessionID), sessionData, h.Expiration).Err()
 	return err
 }
 
