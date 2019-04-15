@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	"github.com/go-redis/redis"
-	"github.com/imantung/phpsessgo"
+	"github.com/tiket-oss/phpsessgo"
 )
 
 var (

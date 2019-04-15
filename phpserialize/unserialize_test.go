@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/imantung/phpsessgo/phptype"
+	"github.com/tiket-oss/phpsessgo/phptype"
 )
 
 func TestDecodeNil(t *testing.T) {

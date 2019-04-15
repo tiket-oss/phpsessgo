@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/imantung/phpsessgo/phptype"
+	"github.com/tiket-oss/phpsessgo/phptype"
 )
 
 func TestEncodeNil(t *testing.T) {

@@ -5,8 +5,8 @@ import (
 	"io"
 	"strings"
 
-	"github.com/imantung/phpsessgo/phpserialize"
-	"github.com/imantung/phpsessgo/phptype"
+	"github.com/tiket-oss/phpsessgo/phpserialize"
+	"github.com/tiket-oss/phpsessgo/phptype"
 )
 
 type PhpDecoder struct {

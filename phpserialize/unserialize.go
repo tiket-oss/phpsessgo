@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/imantung/phpsessgo/phptype"
+	"github.com/tiket-oss/phpsessgo/phptype"
 )
 
 const UNSERIALIZABLE_OBJECT_MAX_LEN = 10 * 1024 * 1024 * 1024

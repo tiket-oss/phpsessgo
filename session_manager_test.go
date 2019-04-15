@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/imantung/phpsessgo"
-	"github.com/imantung/phpsessgo/mock"
-	"github.com/imantung/phpsessgo/phpencode"
+	"github.com/tiket-oss/phpsessgo"
+	"github.com/tiket-oss/phpsessgo/mock"
+	"github.com/tiket-oss/phpsessgo/phpencode"
 	"github.com/stretchr/testify/require"
 )
 

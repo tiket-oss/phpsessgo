@@ -1,6 +1,6 @@
 package phpsessgo
 
-import "github.com/imantung/phpsessgo/phpencode"
+import "github.com/tiket-oss/phpsessgo/phpencode"
 
 // Session handle creation/modification of session parametr
 type Session struct {

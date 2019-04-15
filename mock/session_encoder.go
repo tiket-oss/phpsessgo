@@ -6,7 +6,7 @@ package mock
 
 import (
 	gomock "github.com/golang/mock/gomock"
-	phpencode "github.com/imantung/phpsessgo/phpencode"
+	phpencode "github.com/tiket-oss/phpsessgo/phpencode"
 	reflect "reflect"
 )
 

@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/imantung/phpsessgo/phpserialize"
-	"github.com/imantung/phpsessgo/phptype"
+	"github.com/tiket-oss/phpsessgo/phpserialize"
+	"github.com/tiket-oss/phpsessgo/phptype"
 )
 
 func TestDecodeBooleanValue(t *testing.T) {

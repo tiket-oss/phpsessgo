@@ -3,7 +3,7 @@ package phpsessgo
 import (
 	"net/http"
 
-	"github.com/imantung/phpsessgo/phpencode"
+	"github.com/tiket-oss/phpsessgo/phpencode"
 )
 
 // SessionManager handle session creation/modification

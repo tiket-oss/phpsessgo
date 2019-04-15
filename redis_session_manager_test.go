@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/go-redis/redis"
-	"github.com/imantung/phpsessgo"
+	"github.com/tiket-oss/phpsessgo"
 	"github.com/stretchr/testify/require"
 )
 
