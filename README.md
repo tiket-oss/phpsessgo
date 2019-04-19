@@ -41,5 +41,5 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 
 Build and run the sample application
 ```bash
-make sample
+make standard-http-example # example using golang standard http library
 ```
