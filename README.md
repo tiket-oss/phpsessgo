@@ -37,9 +37,13 @@ func handleFunc(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-## Sample Application
+## Examples
 
-Build and run the sample application
+Build and run the examples
 ```bash
-make standard-http-example # example using golang standard http library
+# example using golang standard http library
+make standard-http-example 
+
+# example using echo web framework
+make echo-middleware-example
 ```

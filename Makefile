@@ -16,4 +16,10 @@ standard-http-example:
 	@echo "  >  Run sample..."
 	@./$(SAMPLE_BINARY)
 
-.PHONY: mock standard-http-example
+echo-middleware-example:
+	@echo "  >  Building sample..."
+	@go build -o $(SAMPLE_BINARY) ./examples/echo-middleware-example
+	@echo "  >  Run sample..."
+	@./$(SAMPLE_BINARY)
+
+.PHONY: mock standard-http-example echo-middleware-example
