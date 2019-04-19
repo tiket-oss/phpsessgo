@@ -1,8 +1,6 @@
 package main
 
 import (
-	"flag"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -10,15 +8,9 @@ import (
 	"github.com/tiket-oss/phpsessgo"
 )
 
-var (
-	addr = flag.String("address", ":8181", "echo server address")
-)
-
 var sessionManager *phpsessgo.SessionManager
 
 func main() {
-	flag.Parse()
-	fmt.Printf("Listen and serve at %s\n", *addr)
 
 	var err error
 
@@ -31,7 +23,7 @@ func main() {
 	// server
 	http.HandleFunc("/", handleFunc)
 
-	err = http.ListenAndServe(*addr, nil)
+	err = http.ListenAndServe(":8181", nil)
 	fatalIfError(err)
 }
 
