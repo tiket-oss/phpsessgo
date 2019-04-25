@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/require"
 	"github.com/tiket-oss/phpsessgo"
 	"github.com/tiket-oss/phpsessgo/mock"
 	"github.com/tiket-oss/phpsessgo/phpencode"
-	"github.com/stretchr/testify/require"
 )
 
 func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
@@ -22,11 +22,7 @@ func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
 
 	handler := mock.NewMockSessionHandler(ctrl)
 
-	manager := phpsessgo.SessionManager{
-		SessionName: "some-session-name",
-		SIDCreator:  sidCreator,
-		Handler:     handler,
-	}
+	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, nil)
 
 	req, _ := http.NewRequest(http.MethodGet, "some-url", nil)
 	rr := httptest.NewRecorder()
@@ -45,12 +41,7 @@ func TestSessionManager_Start_ExistingSessionID(t *testing.T) {
 	handler := mock.NewMockSessionHandler(ctrl)
 	encoder := mock.NewMockSessionEncoder(ctrl)
 
-	manager := phpsessgo.SessionManager{
-		SessionName: "some-session-name",
-		SIDCreator:  sidCreator,
-		Handler:     handler,
-		Encoder:     encoder,
-	}
+	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, encoder)
 
 	req, _ := http.NewRequest(http.MethodGet, "some-url", nil)
 	req.AddCookie(&http.Cookie{
@@ -91,12 +82,7 @@ func TestSessionManager_Save(t *testing.T) {
 	handler := mock.NewMockSessionHandler(ctrl)
 	encoder := mock.NewMockSessionEncoder(ctrl)
 
-	manager := phpsessgo.SessionManager{
-		SessionName: "some-session-name",
-		SIDCreator:  sidCreator,
-		Handler:     handler,
-		Encoder:     encoder,
-	}
+	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, encoder)
 
 	session := phpsessgo.NewSession()
 	session.SessionID = "some-session-id"

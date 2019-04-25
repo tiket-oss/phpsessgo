@@ -6,16 +6,40 @@ import (
 	"github.com/tiket-oss/phpsessgo/phpencode"
 )
 
+type SessionManager interface {
+	Start(w http.ResponseWriter, r *http.Request) (session *Session, err error)
+	Save(session *Session) error
+	SessionName() string
+	SIDCreator() SessionIDCreator
+	Handler() SessionHandler
+	Encoder() SessionEncoder
+}
+
+func NewSessionManager(
+	sessionName string,
+	sidCreator SessionIDCreator,
+	handler SessionHandler,
+	encoder SessionEncoder,
+) SessionManager {
+
+	return &sessionManager{
+		sessionName: sessionName,
+		sidCreator:  sidCreator,
+		handler:     handler,
+		encoder:     encoder,
+	}
+}
+
 // SessionManager handle session creation/modification
-type SessionManager struct {
-	SessionName string
-	SIDCreator  SessionIDCreator
-	Handler     SessionHandler
-	Encoder     SessionEncoder
+type sessionManager struct {
+	sessionName string
+	sidCreator  SessionIDCreator
+	handler     SessionHandler
+	encoder     SessionEncoder
 }
 
 // Start is adoption of PHP start_session() to return current active session
-func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session *Session, err error) {
+func (m *sessionManager) Start(w http.ResponseWriter, r *http.Request) (session *Session, err error) {
 	session = NewSession()
 
 	var raw string
@@ -24,19 +48,19 @@ func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session 
 	sessionID := m.getFromCookies(r.Cookies())
 
 	if sessionID == "" {
-		sessionID = m.SIDCreator.CreateSID()
+		sessionID = m.sidCreator.CreateSID()
 		session.SessionID = sessionID
 		m.setToCookies(w, sessionID)
 		return
 	}
 
 	session.SessionID = sessionID
-	raw, err = m.Handler.Read(sessionID)
+	raw, err = m.handler.Read(sessionID)
 	if err != nil {
 		return
 	}
 
-	phpSession, err = m.Encoder.Decode(raw)
+	phpSession, err = m.encoder.Decode(raw)
 	if err != nil {
 		return
 	}
@@ -46,27 +70,43 @@ func (m *SessionManager) Start(w http.ResponseWriter, r *http.Request) (session 
 }
 
 // Save the session
-func (m *SessionManager) Save(session *Session) error {
-	sessionData, err := m.Encoder.Encode(session.Value)
+func (m *sessionManager) Save(session *Session) error {
+	sessionData, err := m.encoder.Encode(session.Value)
 	if err != nil {
 		return err
 	}
 
-	return m.Handler.Write(session.SessionID, sessionData)
+	return m.handler.Write(session.SessionID, sessionData)
 }
 
-func (m *SessionManager) getFromCookies(cookies []*http.Cookie) string {
+func (m *sessionManager) SessionName() string {
+	return m.sessionName
+}
+
+func (m *sessionManager) SIDCreator() SessionIDCreator {
+	return m.sidCreator
+}
+
+func (m *sessionManager) Handler() SessionHandler {
+	return m.handler
+}
+
+func (m *sessionManager) Encoder() SessionEncoder {
+	return m.encoder
+}
+
+func (m *sessionManager) getFromCookies(cookies []*http.Cookie) string {
 	for _, cookie := range cookies {
-		if cookie.Name == m.SessionName {
+		if cookie.Name == m.sessionName {
 			return cookie.Value
 		}
 	}
 	return ""
 }
 
-func (m *SessionManager) setToCookies(w http.ResponseWriter, sid string) {
+func (m *sessionManager) setToCookies(w http.ResponseWriter, sid string) {
 	http.SetCookie(w, &http.Cookie{
-		Name:  m.SessionName,
+		Name:  m.sessionName,
 		Value: sid,
 	})
 }

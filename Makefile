@@ -9,6 +9,7 @@ mock:
 	@go get github.com/golang/mock/gomock
 	@go install github.com/golang/mock/mockgen
 	@$(foreach file,$(files), $(GOPATH)/bin/mockgen -source=$(file).go -destination=$(MOCK_TARGET)/$(file).go -package=$(MOCK_TARGET);)
+	@$(GOPATH)/bin/mockgen -source=session_manager.go -destination=mock_session_manager.go -package=phpsessgo;
 
 standard-http-example:
 	@echo "  >  Building sample..."
