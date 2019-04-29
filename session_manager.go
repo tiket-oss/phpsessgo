@@ -106,7 +106,8 @@ func (m *sessionManager) getFromCookies(cookies []*http.Cookie) string {
 
 func (m *sessionManager) setToCookies(w http.ResponseWriter, sid string) {
 	http.SetCookie(w, &http.Cookie{
-		Name:  m.sessionName,
-		Value: sid,
+		Name:     m.sessionName,
+		Value:    sid,
+		HttpOnly: true,
 	})
 }
