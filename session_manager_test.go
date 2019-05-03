@@ -30,7 +30,7 @@ func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
 	session, err := manager.Start(rr, req)
 	require.NoError(t, err)
 	require.Equal(t, "random-hash", session.SessionID)
-	require.Equal(t, "some-session-name=random-hash", rr.HeaderMap.Get("Set-Cookie"))
+	require.Equal(t, "some-session-name=random-hash; HttpOnly", rr.HeaderMap.Get("Set-Cookie"))
 }
 
 func TestSessionManager_Start_ExistingSessionID(t *testing.T) {
