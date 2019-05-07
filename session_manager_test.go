@@ -22,7 +22,10 @@ func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
 
 	handler := mock.NewMockSessionHandler(ctrl)
 
-	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, nil)
+	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, nil, phpsessgo.SessionManagerConfig{
+		CookieHttpOnly: true,
+		CookieDomain:   "some-domain.com",
+	})
 
 	req, _ := http.NewRequest(http.MethodGet, "some-url", nil)
 	rr := httptest.NewRecorder()
@@ -30,7 +33,7 @@ func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
 	session, err := manager.Start(rr, req)
 	require.NoError(t, err)
 	require.Equal(t, "random-hash", session.SessionID)
-	require.Equal(t, "some-session-name=random-hash; HttpOnly", rr.HeaderMap.Get("Set-Cookie"))
+	require.Equal(t, "some-session-name=random-hash; Domain=some-domain.com; HttpOnly", rr.HeaderMap.Get("Set-Cookie"))
 }
 
 func TestSessionManager_Start_ExistingSessionID(t *testing.T) {
@@ -41,7 +44,7 @@ func TestSessionManager_Start_ExistingSessionID(t *testing.T) {
 	handler := mock.NewMockSessionHandler(ctrl)
 	encoder := mock.NewMockSessionEncoder(ctrl)
 
-	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, encoder)
+	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, encoder, phpsessgo.SessionManagerConfig{})
 
 	req, _ := http.NewRequest(http.MethodGet, "some-url", nil)
 	req.AddCookie(&http.Cookie{
@@ -82,7 +85,7 @@ func TestSessionManager_Save(t *testing.T) {
 	handler := mock.NewMockSessionHandler(ctrl)
 	encoder := mock.NewMockSessionEncoder(ctrl)
 
-	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, encoder)
+	manager := phpsessgo.NewSessionManager("some-session-name", sidCreator, handler, encoder, phpsessgo.SessionManagerConfig{})
 
 	session := phpsessgo.NewSession()
 	session.SessionID = "some-session-id"

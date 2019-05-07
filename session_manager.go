@@ -20,6 +20,7 @@ func NewSessionManager(
 	sidCreator SessionIDCreator,
 	handler SessionHandler,
 	encoder SessionEncoder,
+	config SessionManagerConfig,
 ) SessionManager {
 
 	return &sessionManager{
@@ -27,6 +28,7 @@ func NewSessionManager(
 		sidCreator:  sidCreator,
 		handler:     handler,
 		encoder:     encoder,
+		config:      config,
 	}
 }
 
@@ -36,6 +38,7 @@ type sessionManager struct {
 	sidCreator  SessionIDCreator
 	handler     SessionHandler
 	encoder     SessionEncoder
+	config      SessionManagerConfig
 }
 
 // Start is adoption of PHP start_session() to return current active session
@@ -108,6 +111,7 @@ func (m *sessionManager) setToCookies(w http.ResponseWriter, sid string) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     m.sessionName,
 		Value:    sid,
-		HttpOnly: true,
+		HttpOnly: m.config.CookieHttpOnly,
+		Domain:   m.config.CookieDomain,
 	})
 }

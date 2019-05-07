@@ -5,5 +5,7 @@ import (
 )
 
 type SessionManagerConfig struct {
-	Expiration time.Duration
+	Expiration     time.Duration
+	CookieHttpOnly bool
+	CookieDomain   string
 }
