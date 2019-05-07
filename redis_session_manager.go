@@ -13,6 +13,7 @@ func NewRedisSessionManager(client *redis.Client, config SessionManagerConfig) S
 			Expiration:     config.Expiration,
 		},
 		encoder: &PHPSessionEncoder{},
+		config:  config,
 	}
 	return sessionManager
 }
