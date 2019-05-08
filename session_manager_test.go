@@ -34,7 +34,7 @@ func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
 	session, err := manager.Start(rr, req)
 	require.NoError(t, err)
 	require.Equal(t, "random-hash", session.SessionID)
-	require.Equal(t, "some-session-name=random-hash; Path=/; Domain=some-domain.com; HttpOnly", rr.HeaderMap.Get("Set-Cookie"))
+	require.Equal(t, "some-session-name=random-hash; path=/; domain=some-domain.com; httponly", rr.HeaderMap.Get("Set-Cookie"))
 }
 
 func TestSessionManager_Start_ExistingSessionID(t *testing.T) {
@@ -105,5 +105,15 @@ func TestSessionManager_Save(t *testing.T) {
 		err := manager.Save(session)
 		require.EqualError(t, err, "some-error")
 	})
+}
 
+func TestSessionManager_SetCookieString(t *testing.T) {
+
+	manager := phpsessgo.NewSessionManager("XYX", nil, nil, nil, phpsessgo.SessionManagerConfig{
+		CookiePath:     "/",
+		CookieHttpOnly: true,
+		CookieDomain:   "some-site.com",
+	})
+
+	require.Equal(t, "XYX=abcdefgh; path=/; domain=some-site.com; httponly", manager.SetCookieString("abcdefgh"))
 }

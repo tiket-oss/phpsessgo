@@ -2,6 +2,7 @@ package phpsessgo
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/tiket-oss/phpsessgo/phpencode"
 )
@@ -13,6 +14,7 @@ type SessionManager interface {
 	SIDCreator() SessionIDCreator
 	Handler() SessionHandler
 	Encoder() SessionEncoder
+	SetCookieString(string) string
 }
 
 func NewSessionManager(
@@ -53,7 +55,15 @@ func (m *sessionManager) Start(w http.ResponseWriter, r *http.Request) (session 
 	if sessionID == "" {
 		sessionID = m.sidCreator.CreateSID()
 		session.SessionID = sessionID
-		m.setToCookies(w, sessionID)
+		// http.SetCookie(w, &http.Cookie{
+		// 	Name:     m.sessionName,
+		// 	Value:    sessionID,
+		// 	HttpOnly: m.config.CookieHttpOnly,
+		// 	Path:     m.config.CookiePath,
+		// 	Domain:   m.config.CookieDomain,
+		// })
+
+		w.Header().Add("Set-Cookie", m.SetCookieString(sessionID))
 		return
 	}
 
@@ -107,12 +117,30 @@ func (m *sessionManager) getFromCookies(cookies []*http.Cookie) string {
 	return ""
 }
 
-func (m *sessionManager) setToCookies(w http.ResponseWriter, sid string) {
-	http.SetCookie(w, &http.Cookie{
-		Name:     m.sessionName,
-		Value:    sid,
-		HttpOnly: m.config.CookieHttpOnly,
-		Path:     m.config.CookiePath,
-		Domain:   m.config.CookieDomain,
-	})
+// SetCookieString naive approach to get lowercase Domain and Path attribute
+func (m *sessionManager) SetCookieString(sessionID string) string {
+	var builder strings.Builder
+
+	builder.WriteString(m.SessionName())
+	builder.WriteString("=")
+	builder.WriteString(sessionID)
+	builder.WriteString("; ")
+
+	if m.config.CookiePath != "" {
+		builder.WriteString("path=")
+		builder.WriteString(m.config.CookiePath)
+		builder.WriteString("; ")
+	}
+
+	if m.config.CookieDomain != "" {
+		builder.WriteString("domain=")
+		builder.WriteString(m.config.CookieDomain)
+		builder.WriteString("; ")
+	}
+
+	if m.config.CookieHttpOnly {
+		builder.WriteString("httponly")
+	}
+
+	return builder.String()
 }
