@@ -112,6 +112,7 @@ func (m *sessionManager) setToCookies(w http.ResponseWriter, sid string) {
 		Name:     m.sessionName,
 		Value:    sid,
 		HttpOnly: m.config.CookieHttpOnly,
+		Path:     m.config.CookiePath,
 		Domain:   m.config.CookieDomain,
 	})
 }
