@@ -117,3 +117,17 @@ func (mr *MockSessionManagerMockRecorder) Encoder() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Encoder", reflect.TypeOf((*MockSessionManager)(nil).Encoder))
 }
+
+// SetCookieString mocks base method
+func (m *MockSessionManager) SetCookieString(arg0 string) string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SetCookieString", arg0)
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// SetCookieString indicates an expected call of SetCookieString
+func (mr *MockSessionManagerMockRecorder) SetCookieString(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetCookieString", reflect.TypeOf((*MockSessionManager)(nil).SetCookieString), arg0)
+}
