@@ -10,8 +10,8 @@ import (
 	"github.com/tiket-oss/phpsessgo"
 )
 
-sessionManager := phpsessgo.NewSession( 
-	DefaultSessionName,
+sessionManager := phpsessgo.NewSessionManager( 
+	phpsessgo.DefaultSessionName,
 	&phpsessgo.UUIDCreator{},
 	&phpsessgo.RedisSessionHandler{
 		Client:         client,
