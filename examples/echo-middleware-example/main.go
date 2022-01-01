@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/go-redis/redis"
 	"github.com/labstack/echo"
@@ -9,7 +10,7 @@ import (
 	"github.com/tiket-oss/phpsessgo"
 )
 
-var sessionManager *phpsessgo.SessionManager
+var sessionManager phpsessgo.SessionManager
 
 func main() {
 
@@ -17,7 +18,13 @@ func main() {
 	client := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
 	})
-	sessionManager = phpsessgo.NewRedisSessionManager(client)
+	sessionManager = phpsessgo.NewRedisSessionManager(client, phpsessgo.SessionManagerConfig{
+		Expiration:     time.Hour,
+		CookiePath:     "/",
+		CookieHttpOnly: true,
+		CookieDomain:   "localhost:1323",
+		CookieSecure:   false,
+	})
 
 	// Echo instance
 	e := echo.New()

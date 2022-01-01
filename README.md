@@ -6,15 +6,26 @@ The project aimed to imitating PHP Session Management in as much aspect as possi
 
 Create new session manager
 ```go
-sessionManager := &SessionManager{
-	SessionName: DefaultSessionName,
-	SIDCreator:  &UUIDCreator{},
-	Handler: &RedisSessionHandler{
+import (
+	"github.com/tiket-oss/phpsessgo"
+)
+
+sessionManager := phpsessgo.NewSessionManager( 
+	phpsessgo.DefaultSessionName,
+	&phpsessgo.UUIDCreator{},
+	&phpsessgo.RedisSessionHandler{
 		Client:         client,
 		RedisKeyPrefix: DefaultRedisKeyPrefix,
 	},
-	Encoder: &PHPSessionEncoder{},
-}
+	&phpsessgo.PHPSessionEncoder{},
+	phpsessgo.SessionManagerConfig{
+		Expiration:     time.Hour * 24,
+		CookiePath:     "/",
+		CookieHttpOnly: true,
+		CookieDomain:   "localhost",
+		CookieSecure:   true,
+	},
+)
 ```
 
 Example of HTTP Handler function

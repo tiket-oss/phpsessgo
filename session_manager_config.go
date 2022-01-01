@@ -9,4 +9,5 @@ type SessionManagerConfig struct {
 	CookiePath     string
 	CookieHttpOnly bool
 	CookieDomain   string
+	CookieSecure   bool
 }

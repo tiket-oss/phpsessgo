@@ -26,6 +26,7 @@ func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
 		CookieHttpOnly: true,
 		CookieDomain:   "some-domain.com",
 		CookiePath:     "/",
+		CookieSecure:   true,
 	})
 
 	req, _ := http.NewRequest(http.MethodGet, "some-url", nil)
@@ -34,7 +35,7 @@ func TestSessionManager_Start_GenerateSessionID(t *testing.T) {
 	session, err := manager.Start(rr, req)
 	require.NoError(t, err)
 	require.Equal(t, "random-hash", session.SessionID)
-	require.Equal(t, "some-session-name=random-hash; path=/; domain=some-domain.com; httponly", rr.HeaderMap.Get("Set-Cookie"))
+	require.Equal(t, "some-session-name=random-hash; path=/; domain=some-domain.com; secure; httponly", rr.HeaderMap.Get("Set-Cookie"))
 }
 
 func TestSessionManager_Start_ExistingSessionID(t *testing.T) {

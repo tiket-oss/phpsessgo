@@ -138,6 +138,10 @@ func (m *sessionManager) SetCookieString(sessionID string) string {
 		builder.WriteString("; ")
 	}
 
+	if m.config.CookieSecure {
+		builder.WriteString("secure; ")
+	}
+
 	if m.config.CookieHttpOnly {
 		builder.WriteString("httponly")
 	}
