@@ -13,7 +13,7 @@ var sessionManager phpsessgo.SessionManager
 
 func main() {
 
-	sessionManager = phpsessgo.NewSessionManager(phpsessgo.SessionManagerConfig{
+	sessionManager = phpsessgo.NewSessionManagerRaw(phpsessgo.SessionManagerConfig{
 		Expiration:     time.Hour,
 		CookiePath:     "/",
 		CookieHttpOnly: true,

@@ -1,3 +1,0 @@
-package phpsessgo
-
-// remove

@@ -14,7 +14,7 @@ func main() {
 
 	var err error
 
-	sessionManager = phpsessgo.NewSessionManager(client, phpsessgo.SessionManagerConfig{
+	sessionManager = phpsessgo.NewSessionManagerRaw(client, phpsessgo.SessionManagerConfig{
 		Expiration:     time.Hour,
 		CookiePath:     "/",
 		CookieHttpOnly: true,
