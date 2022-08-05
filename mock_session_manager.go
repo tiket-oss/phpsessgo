@@ -90,20 +90,6 @@ func (mr *MockSessionManagerMockRecorder) SIDCreator() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SIDCreator", reflect.TypeOf((*MockSessionManager)(nil).SIDCreator))
 }
 
-// Handler mocks base method
-func (m *MockSessionManager) Handler() SessionHandler {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Handler")
-	ret0, _ := ret[0].(SessionHandler)
-	return ret0
-}
-
-// Handler indicates an expected call of Handler
-func (mr *MockSessionManagerMockRecorder) Handler() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Handler", reflect.TypeOf((*MockSessionManager)(nil).Handler))
-}
-
 // Encoder mocks base method
 func (m *MockSessionManager) Encoder() SessionEncoder {
 	m.ctrl.T.Helper()

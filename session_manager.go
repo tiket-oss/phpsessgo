@@ -12,15 +12,24 @@ type SessionManager interface {
 	Save(session *Session) error
 	SessionName() string
 	SIDCreator() SessionIDCreator
-	Handler() SessionHandler
 	Encoder() SessionEncoder
 	SetCookieString(string) string
 }
 
-func NewSessionManager(
+// NewSessionManager create new instance of SessionManager
+func NewSessionManager(config SessionManagerConfig) SessionManager {
+	sessionManager := &sessionManager{
+		sessionName: DefaultSessionName,
+		sidCreator:  &UUIDCreator{},
+		encoder: &PHPSessionEncoder{},
+		config:  config,
+	}
+	return sessionManager
+}
+
+func NewSessionManagerRaw(
 	sessionName string,
 	sidCreator SessionIDCreator,
-	handler SessionHandler,
 	encoder SessionEncoder,
 	config SessionManagerConfig,
 ) SessionManager {
@@ -28,7 +37,6 @@ func NewSessionManager(
 	return &sessionManager{
 		sessionName: sessionName,
 		sidCreator:  sidCreator,
-		handler:     handler,
 		encoder:     encoder,
 		config:      config,
 	}
@@ -38,7 +46,6 @@ func NewSessionManager(
 type sessionManager struct {
 	sessionName string
 	sidCreator  SessionIDCreator
-	handler     SessionHandler
 	encoder     SessionEncoder
 	config      SessionManagerConfig
 }
@@ -68,7 +75,7 @@ func (m *sessionManager) Start(w http.ResponseWriter, r *http.Request) (session 
 	}
 
 	session.SessionID = sessionID
-	raw, err = m.handler.Read(sessionID)
+	raw, err = Read(sessionID)
 	if err != nil {
 		return
 	}
@@ -89,7 +96,7 @@ func (m *sessionManager) Save(session *Session) error {
 		return err
 	}
 
-	return m.handler.Write(session.SessionID, sessionData)
+	return Write(session.SessionID, sessionData)
 }
 
 func (m *sessionManager) SessionName() string {
@@ -98,10 +105,6 @@ func (m *sessionManager) SessionName() string {
 
 func (m *sessionManager) SIDCreator() SessionIDCreator {
 	return m.sidCreator
-}
-
-func (m *sessionManager) Handler() SessionHandler {
-	return m.handler
 }
 
 func (m *sessionManager) Encoder() SessionEncoder {
