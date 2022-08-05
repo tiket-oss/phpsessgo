@@ -13,10 +13,6 @@ import (
 sessionManager := phpsessgo.NewSessionManager( 
 	phpsessgo.DefaultSessionName,
 	&phpsessgo.UUIDCreator{},
-	&phpsessgo.RedisSessionHandler{
-		Client:         client,
-		RedisKeyPrefix: DefaultRedisKeyPrefix,
-	},
 	&phpsessgo.PHPSessionEncoder{},
 	phpsessgo.SessionManagerConfig{
 		Expiration:     time.Hour * 24,

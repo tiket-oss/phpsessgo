@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-redis/redis"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/tiket-oss/phpsessgo"
@@ -14,11 +13,7 @@ var sessionManager phpsessgo.SessionManager
 
 func main() {
 
-	// initiatte SessionManager
-	client := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379",
-	})
-	sessionManager = phpsessgo.NewRedisSessionManager(client, phpsessgo.SessionManagerConfig{
+	sessionManager = phpsessgo.NewSessionManagerRaw(phpsessgo.SessionManagerConfig{
 		Expiration:     time.Hour,
 		CookiePath:     "/",
 		CookieHttpOnly: true,
